@@ -1,0 +1,1403 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no"/>
+  <meta name="theme-color" content="#0D1117"/>
+  <meta name="mobile-web-app-capable" content="yes"/>
+  <meta name="apple-mobile-web-app-capable" content="yes"/>
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+  <meta name="apple-mobile-web-app-title" content="نبض الأخبار"/>
+  <meta name="description" content="تطبيق أخبار عربي متصل بـ n8n مع تحاليل سياسية بالذكاء الاصطناعي"/>
+  <title>نبض الأخبار</title>
+
+  <!-- PWA Manifest inline via JS -->
+  <script>
+    const manifest = {
+      name: "نبض الأخبار",
+      short_name: "نبض",
+      description: "أخبار وتحاليل سياسية عربية مدعومة بالذكاء الاصطناعي",
+      start_url: "./",
+      display: "standalone",
+      background_color: "#0D1117",
+      theme_color: "#0D1117",
+      orientation: "portrait",
+      lang: "ar",
+      dir: "rtl",
+      icons: [
+        { src: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='80' fill='%230D1117'/%3E%3Ccircle cx='256' cy='220' r='80' fill='%232563EB'/%3E%3Ccircle cx='256' cy='220' r='50' fill='%230D1117'/%3E%3Ccircle cx='256' cy='220' r='18' fill='%2322C55E'/%3E%3Crect x='160' y='320' width='192' height='16' rx='8' fill='%232563EB'/%3E%3Crect x='190' y='350' width='132' height='12' rx='6' fill='%23334155'/%3E%3C/svg%3E", sizes: "512x512", type: "image/svg+xml", purpose: "any maskable" }
+      ],
+      shortcuts: [
+        { name: "الأخبار", url: "./?tab=home", icons: [{ src: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 96 96'%3E%3Ctext y='.9em' font-size='90'%3E🏠%3C/text%3E%3C/svg%3E", sizes: "96x96" }] },
+        { name: "التحاليل", url: "./?tab=analyse", icons: [{ src: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 96 96'%3E%3Ctext y='.9em' font-size='90'%3E🏛️%3C/text%3E%3C/svg%3E", sizes: "96x96" }] }
+      ]
+    };
+    const blob = new Blob([JSON.stringify(manifest)], {type:'application/json'});
+    const manifestURL = URL.createObjectURL(blob);
+    document.write('<link rel="manifest" href="' + manifestURL + '"/>');
+  </script>
+
+  <!-- Apple touch icon via inline SVG -->
+  <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='80' fill='%230D1117'/%3E%3Ccircle cx='256' cy='220' r='80' fill='%232563EB'/%3E%3Ccircle cx='256' cy='220' r='50' fill='%230D1117'/%3E%3Ccircle cx='256' cy='220' r='18' fill='%2322C55E'/%3E%3Crect x='160' y='320' width='192' height='16' rx='8' fill='%232563EB'/%3E%3Crect x='190' y='350' width='132' height='12' rx='6' fill='%23334155'/%3E%3C/svg%3E"/>
+
+  <style>
+    /* ── DARK THEME (default) ── */
+    :root {
+      --bg-page:    #060B14;
+      --bg-shell:   #0D1117;
+      --bg-card:    #111827;
+      --bg-card2:   #0F172A;
+      --bg-nav:     #0A1120;
+      --bg-input:   #0D1117;
+      --bg-chip:    #1E293B;
+      --border:     #1E293B;
+      --border2:    #334155;
+      --txt-h:      #F8FAFC;
+      --txt-p:      #F1F5F9;
+      --txt-s:      #CBD5E1;
+      --txt-m:      #94A3B8;
+      --txt-d:      #64748B;
+      --txt-x:      #475569;
+      --shadow:     rgba(0,0,0,.8);
+      --overlay:    rgba(0,0,0,.65);
+      --notch:      #0D1117;
+      --urgent-bg:  rgba(220,38,38,.1);
+      --urgent-brd: rgba(220,38,38,.3);
+      --transition: background .25s, color .25s, border-color .25s, box-shadow .25s;
+    }
+    /* ── LIGHT THEME ── */
+    :root.light {
+      --bg-page:    #F0F4F8;
+      --bg-shell:   #FFFFFF;
+      --bg-card:    #F8FAFC;
+      --bg-card2:   #F1F5F9;
+      --bg-nav:     #FFFFFF;
+      --bg-input:   #F1F5F9;
+      --bg-chip:    #E2E8F0;
+      --border:     #E2E8F0;
+      --border2:    #CBD5E1;
+      --txt-h:      #0F172A;
+      --txt-p:      #1E293B;
+      --txt-s:      #334155;
+      --txt-m:      #475569;
+      --txt-d:      #64748B;
+      --txt-x:      #94A3B8;
+      --shadow:     rgba(0,0,0,.15);
+      --overlay:    rgba(0,0,0,.4);
+      --notch:      #FFFFFF;
+      --urgent-bg:  rgba(220,38,38,.06);
+      --urgent-brd: rgba(220,38,38,.2);
+    }
+
+    *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+    html,body{height:100%;overflow:hidden;background:var(--bg-page);font-family:'Noto Sans Arabic','Segoe UI',system-ui,sans-serif;transition:var(--transition);}
+    #root{height:100%;display:flex;justify-content:center;align-items:center;}
+
+    /* PWA install banner */
+    #install-banner{
+      position:fixed;bottom:0;left:0;right:0;z-index:9999;
+      background:var(--bg-card2);
+      border-top:1px solid var(--border2);
+      padding:16px 20px max(16px, env(safe-area-inset-bottom));
+      display:flex;align-items:center;gap:14px;
+      animation:slideUpBanner .4s ease;
+      box-shadow:0 -8px 32px var(--shadow);
+    }
+    #install-banner.hidden{display:none;}
+    @keyframes slideUpBanner{from{transform:translateY(100%)}to{transform:translateY(0)}}
+    .install-icon{width:52px;height:52px;background:linear-gradient(135deg,#2563EB,#7C3AED);border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:26px;flex-shrink:0;}
+    .install-text{flex:1;}
+    .install-title{color:var(--txt-p);font-size:15px;font-weight:700;margin-bottom:3px;}
+    .install-sub{color:var(--txt-d);font-size:12px;line-height:1.4;}
+    .install-btn{background:linear-gradient(135deg,#2563EB,#7C3AED);color:#fff;border:none;padding:10px 18px;border-radius:12px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;white-space:nowrap;flex-shrink:0;}
+    .install-close{background:none;border:none;color:var(--txt-x);font-size:20px;cursor:pointer;padding:4px;flex-shrink:0;line-height:1;}
+
+    /* Theme toggle switch */
+    .theme-toggle{position:relative;width:52px;height:28px;flex-shrink:0;}
+    .theme-toggle input{opacity:0;width:0;height:0;position:absolute;}
+    .theme-track{
+      position:absolute;inset:0;border-radius:14px;cursor:pointer;
+      background:#1E293B;transition:background .3s;
+      display:flex;align-items:center;justify-content:space-between;padding:0 6px;font-size:12px;
+    }
+    :root.light .theme-track{background:#CBD5E1;}
+    .theme-thumb{
+      position:absolute;top:3px;right:3px;width:22px;height:22px;border-radius:50%;
+      background:linear-gradient(135deg,#2563EB,#7C3AED);
+      transition:transform .3s cubic-bezier(.34,1.56,.64,1);
+      box-shadow:0 2px 6px rgba(0,0,0,.3);
+      display:flex;align-items:center;justify-content:center;font-size:12px;
+    }
+    :root.light .theme-thumb{transform:translateX(-24px);}
+
+    /* App keyframes */
+    @keyframes spin{to{transform:rotate(360deg)}}
+    @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+    @keyframes slideUp{from{transform:translateY(100%);opacity:0}to{transform:translateY(0);opacity:1}}
+    @keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+    ::-webkit-scrollbar{width:0}
+    textarea:focus{border-color:#2563EB!important;outline:none}
+    input:focus{border-color:#2563EB!important;outline:none}
+    button{-webkit-tap-highlight-color:transparent;}
+  </style>
+</head>
+<body>
+
+<!-- PWA Install Banner -->
+<div id="install-banner" class="hidden">
+  <div class="install-icon">📡</div>
+  <div class="install-text">
+    <div class="install-title">تثبيت نبض الأخبار</div>
+    <div class="install-sub">أضفه للشاشة الرئيسية للوصول السريع بدون متصفح</div>
+  </div>
+  <button class="install-btn" id="install-btn">تثبيت</button>
+  <button class="install-close" id="install-close">✕</button>
+</div>
+
+<div id="root"></div>
+
+<!-- React + Babel -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.2/babel.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+
+<script type="text/babel">
+const { useState, useEffect, useRef, useCallback } = React;
+
+// ══════════════════════════════════════════════
+//  MOCK DATA
+// ══════════════════════════════════════════════
+const MOCK_NEWS = [
+  { id:1, country:"السعودية", countryCode:"SA", flag:"🇸🇦", category:"اقتصاد",
+    title:"رؤية 2030 تُسجّل نموّاً قياسياً في القطاع غير النفطي",
+    summary:"أعلنت وزارة الاقتصاد السعودية أن الناتج المحلي غير النفطي حقق نمواً بنسبة 6.2٪ في الربع الأول، متجاوزاً التوقعات بفضل توسع قطاعَي السياحة والترفيه.",
+    source:"رويترز", time:"منذ 23 دقيقة", urgent:true, views:"14.2K" },
+  { id:2, country:"السعودية", countryCode:"SA", flag:"🇸🇦", category:"تقنية",
+    title:"أرامكو تُطلق مسرّع الذكاء الاصطناعي لقطاع الطاقة",
+    summary:"تُطلق أرامكو السعودية برنامجاً لتسريع تبنّي الذكاء الاصطناعي في عمليات الاستكشاف والإنتاج، بشراكة مع 12 شركة تقنية عالمية.",
+    source:"العربية", time:"منذ ساعة", urgent:false, views:"8.7K" },
+  { id:3, country:"مصر", countryCode:"EG", flag:"🇪🇬", category:"اقتصاد",
+    title:"صندوق النقد يُقرّ الشريحة الرابعة من قرض مصر",
+    summary:"وافق صندوق النقد الدولي على صرف 1.2 مليار دولار للقاهرة، بعد استيفاء شروط الإصلاح الاقتصادي، وسط توقعات بتراجع التضخم خلال الأشهر المقبلة.",
+    source:"بلومبرغ", time:"منذ ساعتين", urgent:false, views:"21.5K" },
+  { id:4, country:"مصر", countryCode:"EG", flag:"🇪🇬", category:"سياسة",
+    title:"مصر والاتحاد الأوروبي يوقّعان اتفاقية شراكة استراتيجية",
+    summary:"تتضمن الاتفاقية حزمة تمويلية بـ7.4 مليار يورو تشمل الطاقة المتجددة والبنية التحتية.",
+    source:"الجزيرة", time:"منذ 3 ساعات", urgent:false, views:"18.3K" },
+  { id:5, country:"الإمارات", countryCode:"AE", flag:"🇦🇪", category:"تقنية",
+    title:"دبي تُعلن إطار عمل حوكمة الذكاء الاصطناعي الأشمل عربياً",
+    summary:"أطلقت هيئة دبي الرقمية إطاراً تشريعياً متكاملاً لحوكمة تطبيقات الذكاء الاصطناعي، يُعدّ الأول من نوعه على مستوى المنطقة العربية.",
+    source:"خليج تايمز", time:"منذ 4 ساعات", urgent:false, views:"11.9K" },
+  { id:6, country:"المغرب", countryCode:"MA", flag:"🇲🇦", category:"رياضة",
+    title:"المغرب يُبهر العالم في تصفيات كأس العالم 2026",
+    summary:"سجّل المنتخب المغربي فوزاً كاسحاً بخمسة أهداف في مباراة التصفيات، ليتصدر مجموعته بفارق ست نقاط.",
+    source:"كووورة", time:"منذ 6 ساعات", urgent:false, views:"44.1K" },
+  { id:7, country:"الجزائر", countryCode:"DZ", flag:"🇩🇿", category:"اقتصاد",
+    title:"الجزائر تُطلق صندوقاً سيادياً بـ5 مليارات دولار",
+    summary:"أعلنت الحكومة الجزائرية عن إنشاء صندوق سيادي جديد يستهدف تنويع الاستثمارات بعيداً عن المحروقات.",
+    source:"الشروق", time:"منذ ساعتين", urgent:false, views:"7.8K" },
+  { id:8, country:"قطر", countryCode:"QA", flag:"🇶🇦", category:"سياسة",
+    title:"قطر تُعزّز دورها الوسيط في مفاوضات السلام الإقليمية",
+    summary:"كشفت مصادر دبلوماسية أن الدوحة تستضيف جولة جديدة من المحادثات متعددة الأطراف في إطار مساعيها لتعزيز الاستقرار.",
+    source:"Al Jazeera", time:"منذ 5 ساعات", urgent:false, views:"15.6K" },
+];
+
+const MOCK_ANALYSES = [
+  { id:"a1", country:"السعودية", countryCode:"SA", flag:"🇸🇦",
+    title:"التحولات الجيوسياسية السعودية في مرحلة ما بعد النفط",
+    body:"تقف المملكة العربية السعودية اليوم أمام منعطف تاريخي غير مسبوق، إذ تسعى إلى إعادة تعريف دورها الإقليمي والدولي في ظل متغيرات عالمية متسارعة تُلقي بظلالها على موازين القوى في منطقة الشرق الأوسط وما وراءها.\n\nتتجلى أبرز ملامح هذا التحول في الدبلوماسية الاقتصادية المتعددة المحاور التي تنتهجها الرياض، حيث باتت العلاقات مع بكين وموسكو وواشنطن تسير في مسارات متوازية بدلاً من التبعية الأحادية التي طبعت العقود الماضية. هذا النهج يُعبّر عن وعي استراتيجي بأن القوة في القرن الحادي والعشرين لا تُقاس بالتحالفات الحصرية، بل بالقدرة على التوازن بين الشركاء المتنافسين.\n\nعلى الصعيد الداخلي، يُمثل مسار رؤية 2030 محاولةً جادة لفك الاشتباك مع الريع النفطي كمصدر وحيد للشرعية، عبر بناء قطاعات إنتاجية تخلق فرص عمل حقيقية للجيل الشاب الذي يشكل نحو 70٪ من السكان.\n\nفي المحصلة، تبدو المملكة وكأنها تراهن على نموذج التحديث من فوق الذي نجح في تجارب آسيوية عدة، مع الاحتفاظ بالثوابت السياسية التي ترى فيها ضماناً للاستقرار.",
+    image:"https://images.unsplash.com/photo-1586724237569-f3d0c1dee8c6?w=800&q=80",
+    author:"د. نورة المنصور", readTime:"8 دقائق", publishedAt:"2026-06-27T10:00:00Z", tags:["رؤية 2030","جيوسياسة","الخليج"] },
+  { id:"a2", country:"مصر", countryCode:"EG", flag:"🇪🇬",
+    title:"مصر بين ضغوط الديون وطموحات التنمية: قراءة في المشهد الراهن",
+    body:"تجد مصر نفسها في خضم معادلة بالغة التعقيد: دولة تمتلك من عناصر القوة الكثير — موقعاً جغرافياً استراتيجياً، وتاريخاً حضارياً فريداً، وكتلة بشرية ضخمة تتجاوز مئة مليون نسمة — لكنها تُعاني من إرث اقتصادي ثقيل يُقيّد هامش المناورة.\n\nالاتفاق مع صندوق النقد الدولي، رغم ما يوفره من سيولة نقدية ضرورية، يأتي مصحوباً بشروط هيكلية تنطوي على تكاليف اجتماعية يتحملها المواطن العادي أولاً. تراجع قيمة الجنيه، وارتفاع التضخم، وتقليص الدعم التدريجي — هذه المعطيات تُشكّل بيئةً اجتماعية مشحونة.\n\nفي المقابل، تُراهن القاهرة على مشاريع البنية التحتية الكبرى كرافعة للنمو في المدى المتوسط. العاصمة الإدارية الجديدة، وتوسعة قناة السويس، ومشاريع الطاقة المتجددة — هذه المشاريع تحمل طموحاً حقيقياً لكنها تتطلب سنوات.\n\nالرهان الأخطر يبقى في قدرة الدولة على تحويل الديموغرافيا من عبء إلى ميزة، وهو ما يستلزم منظومة تعليمية مُصلحة وبيئة استثمارية أكثر انفتاحاً.",
+    image:"https://images.unsplash.com/photo-1539768942893-daf53e448371?w=800&q=80",
+    author:"أ. طارق الشيخ", readTime:"7 دقائق", publishedAt:"2026-06-26T14:00:00Z", tags:["اقتصاد","صندوق النقد","مصر"] },
+  { id:"a3", country:"المغرب", countryCode:"MA", flag:"🇲🇦",
+    title:"النموذج المغربي: دبلوماسية متعددة الأبعاد في عالم متحول",
+    body:"يُمثّل المغرب حالةً لافتة في السياسة الخارجية العربية، إذ نجح في بناء شبكة علاقات متوازنة تجمع بين الانتماء الأفريقي العميق والشراكة الأوروبية الراسخة والتعاون الخليجي المتنامي.\n\naستضافة المغرب لكأس العالم 2030 ليست مجرد حدث رياضي، بل هي مشروع جيوسياسي بامتياز يرسّخ صورة المملكة كوسيط موثوق وبلد مستقر في منطقة تعاني من اضطرابات متعددة.\n\nعلى الصعيد الداخلي، تسير الرباط في مسار إصلاحي تدريجي يُوازن بين متطلبات التحديث والثوابت الملكية التي تُعدّ ركيزة النظام.\n\nالرهان المغربي يبدو واضحاً: تحويل الموقع الجغرافي من مجرد ميزة طبيعية إلى قوة ناعمة فاعلة تُعظّم نفوذ الرباط في المعادلات الإقليمية والدولية.",
+    image:"https://images.unsplash.com/photo-1539020140153-e479b8c22e70?w=800&q=80",
+    author:"د. فاطمة الزهراء", readTime:"6 دقائق", publishedAt:"2026-06-25T09:00:00Z", tags:["المغرب","دبلوماسية","أفريقيا"] },
+  { id:"a4", country:"الإمارات", countryCode:"AE", flag:"🇦🇪",
+    title:"الإمارات ورهان الذكاء الاصطناعي: نحو اقتصاد ما بعد النفط",
+    body:"تُجسّد الإمارات العربية المتحدة اليوم تجربة فريدة في التحول الاقتصادي، إذ قطعت شوطاً بعيداً في رحلة التنويع مقارنةً بجيرانها الخليجيين. الرهان على الذكاء الاصطناعي ليس مجرد موضة تقنية، بل استراتيجية وطنية متكاملة.\n\nإطلاق وزارة الذكاء الاصطناعي عام 2017، وتأسيس شركات مثل G42 وMGX، وجذب عقول من وادي السيليكون — هذه ليست خطوات معزولة بل حلقات في سلسلة استراتيجية واضحة المعالم.\n\nالتحدي الأكبر يكمن في بناء رأس مال بشري محلي قادر على قيادة هذه الثورة التقنية لا مجرد استهلاكها، وهو ما تسعى إليه الإمارات من خلال منح الإقامة الذهبية للكفاءات.",
+    image:"https://images.unsplash.com/photo-1512453979798-5ea266f8880c?w=800&q=80",
+    author:"م. خالد الهاشمي", readTime:"5 دقائق", publishedAt:"2026-06-24T11:00:00Z", tags:["الإمارات","ذكاء اصطناعي","اقتصاد"] },
+  { id:"a5", country:"تونس", countryCode:"TN", flag:"🇹🇳",
+    title:"تونس: الديمقراطية المعلّقة وتحديات المرحلة",
+    body:"تُعدّ التجربة التونسية من أكثر المسارات السياسية العربية إثارةً للتأمل والجدل. فمن رحم الربيع العربي وُلد نموذج تعددي أُشيد به دولياً، ليعود الدستور عام 2022 ويُعيد رسم خريطة السلطة بصورة مركزية.\n\nالاقتصاد التونسي يمر بضائقة حادة تتجلى في ارتفاع معدلات البطالة ونزيف الكفاءات المتواصل نحو أوروبا. هذا النزيف يُعدّ التحدي الوجودي الأخطر أمام أي مشروع تنموي.\n\nفي المقابل، تمتلك تونس رصيداً من المؤسسات المدنية والكفاءات البشرية والثقافة السياسية المتراكمة يجعلها قادرة على تجاوز أزماتها إذا ما أُتيحت الفرصة.",
+    image:"https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&q=80",
+    author:"أ. سارة بن علي", readTime:"7 دقائق", publishedAt:"2026-06-23T08:00:00Z", tags:["تونس","ديمقراطية","شمال أفريقيا"] },
+];
+
+// ══════════════════════════════════════════════
+//  COLORS
+// ══════════════════════════════════════════════
+const PC = {SA:"#2DD4BF",EG:"#F59E0B",AE:"#818CF8",MA:"#F87171",TN:"#34D399",DZ:"#FB923C",QA:"#E879F9",KW:"#4ADE80",IQ:"#60A5FA",LY:"#A78BFA",INTL:"var(--txt-m)"};
+function hc(c){let h=0;for(let i=0;i<c.length;i++)h=c.charCodeAt(i)+((h<<5)-h);return`hsl(${Math.abs(h)%360},70%,65%)`;}
+function rgba(hex,a){
+  if(hex.startsWith("hsl"))return hex.replace("hsl(","hsla(").replace(")",`,${a})`);
+  const r=parseInt(hex.slice(1,3),16),g=parseInt(hex.slice(3,5),16),b=parseInt(hex.slice(5,7),16);
+  return`rgba(${r},${g},${b},${a})`;
+}
+function gc(code){const accent=PC[code]||hc(code||"XX");return{accent,bg:rgba(accent,.08),border:rgba(accent,.3)};}
+const CATI = {
+  اقتصاد: "📈",
+  تقنية: "💡",
+  سياسة: "🏛️",
+  مجتمع: "👨‍👩‍👦‍👦",
+  صحة: "🏥",
+  ثقافة: "🎭",
+  عام: "📰",
+};
+
+// ══════════════════════════════════════════════
+//  UNIVERSAL N8N PARSER
+// ══════════════════════════════════════════════
+function parseN8NResponse(data){
+  if(!data) return null;
+  if(Array.isArray(data) && data.length > 0){
+    if(data[0]?.json !== undefined) return data.map(i => i.json);
+    return data;
+  }
+  if(typeof data === "object" && data !== null){
+    const arr = data.items || data.data || data.news || data.analyses || data.results || data.content;
+    if(Array.isArray(arr) && arr.length > 0) return arr;
+    if(data.id !== undefined) return [data];
+    if(data.json) return Array.isArray(data.json) ? data.json : [data.json];
+  }
+  return null;
+}
+
+async function fetchNews(url){
+  if(!url||url.includes("your-app")) return MOCK_NEWS;
+  try{
+    const res=await fetch(url,{method:"GET",headers:{"Accept":"application/json"}});
+    if(!res.ok) throw new Error("HTTP "+res.status);
+    const parsed=parseN8NResponse(await res.json());
+    return parsed&&parsed.length>0?parsed:MOCK_NEWS;
+  }catch(e){ console.warn("fetchNews →",e.message); return MOCK_NEWS; }
+}
+async function fetchAnalyses(url){
+  if(!url||url.includes("your-app")) return MOCK_ANALYSES;
+  try{
+    const res=await fetch(url,{method:"GET",headers:{"Accept":"application/json"}});
+    if(!res.ok) throw new Error("HTTP "+res.status);
+    const parsed=parseN8NResponse(await res.json());
+    return parsed&&parsed.length>0?parsed:MOCK_ANALYSES;
+  }catch(e){ console.warn("fetchAnalyses →",e.message); return MOCK_ANALYSES; }
+}
+
+async function genComment(title,summary){
+  try{
+    const res=await fetch("https://api.anthropic.com/v1/messages",{
+      method:"POST",headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({model:"claude-sonnet-4-6",max_tokens:1000,
+        system:"أنت محلل إخباري عربي متخصص. قدّم تعليقاً تحليلياً موجزاً (3-4 جمل) موضوعياً بلغة عربية فصيحة. أجب مباشرةً بالتعليق فقط.",
+        messages:[{role:"user",content:`العنوان: ${title}\nالملخص: ${summary}`}]}),
+    });
+    const d=await res.json();return d.content?.[0]?.text||"تعذّر توليد التعليق.";
+  }catch(e){return"تعذّر الاتصال بمحرك التحليل.";}
+}
+
+const isStandalone=()=>window.matchMedia('(display-mode: standalone)').matches||window.navigator.standalone;
+
+// ══════════════════════════════════════════════
+//  SHARED COMPONENTS
+// ══════════════════════════════════════════════
+function Clock(){
+  const [t,setT]=useState(new Date());
+  useEffect(()=>{const id=setInterval(()=>setT(new Date()),1000);return()=>clearInterval(id);},[]);
+  return <span>{t.toLocaleTimeString("ar-EG",{hour:"2-digit",minute:"2-digit"})}</span>;
+}
+
+function StatusBar(){
+  if(isStandalone()) return null;
+  return(
+    <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",padding:"10px 20px 0",color:"var(--txt-s)",fontSize:12,fontWeight:600,flexShrink:0}}>
+      <Clock/><div style={{display:"flex",gap:6}}><span>📶</span><span>🔋</span></div>
+    </div>
+  );
+}
+
+function CountryTab({label,flag,active,onClick,accent,count}){
+  return(
+    <div style={{position:"relative",flexShrink:0}}>
+      <button onClick={onClick} style={{padding:"7px 15px",borderRadius:50,border:"none",cursor:"pointer",transition:"all .2s",
+        background:active?accent:"var(--bg-chip)",color:active?"var(--bg-input)":"var(--txt-m)",
+        fontWeight:active?700:500,fontSize:13,display:"flex",alignItems:"center",gap:6,fontFamily:"inherit",
+        boxShadow:active?`0 0 14px ${accent}55`:"none"}}>
+        <span style={{fontSize:15}}>{flag}</span>{label}
+      </button>
+      {count>0&&<div style={{position:"absolute",top:-4,left:-4,background:accent,color:"var(--bg-input)",
+        fontSize:9,fontWeight:800,width:16,height:16,borderRadius:"50%",
+        display:"flex",alignItems:"center",justifyContent:"center",border:"2px solid var(--bg-shell)"}}>{count}</div>}
+    </div>
+  );
+}
+
+// ══════════════════════════════════════════════
+//  NEWS CARD + DRAWER
+// ══════════════════════════════════════════════
+function NewsCard({news,onOpen,onSave,saved}){
+  const col=gc(news.countryCode);
+  return(
+    <div style={{background:"var(--bg-card)",border:"1px solid var(--border)",borderRadius:18,padding:"15px 17px",marginBottom:13,position:"relative",overflow:"hidden"}}>
+      <div style={{position:"absolute",right:0,top:0,bottom:0,width:4,background:col.accent,borderRadius:"0 18px 18px 0"}}/>
+      <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",marginBottom:9}}>
+        <div style={{display:"flex",gap:5,flexWrap:"wrap",alignItems:"center"}}>
+          {news.urgent&&<span style={{background:"#DC2626",color:"#fff",fontSize:10,fontWeight:700,padding:"2px 7px",borderRadius:50}}>⚡ عاجل</span>}
+          <span style={{background:col.bg,color:col.accent,fontSize:11,fontWeight:600,padding:"2px 9px",borderRadius:50,border:`1px solid ${col.border}`}}>{CATI[news.category]||"📰"} {news.category}</span>
+          <span style={{background:"var(--bg-chip)",color:"var(--txt-d)",fontSize:11,padding:"2px 8px",borderRadius:50}}>{news.flag} {news.country}</span>
+        </div>
+        <button onClick={e=>{e.stopPropagation();onSave(news);}} style={{background:"none",border:"none",cursor:"pointer",fontSize:17,padding:"0 4px",color:saved?"#F59E0B":"var(--border2)",flexShrink:0}}>🔖</button>
+      </div>
+      <h3 onClick={()=>onOpen(news)} style={{color:"var(--txt-p)",fontSize:14.5,fontWeight:700,margin:"0 0 7px",lineHeight:1.55,cursor:"pointer"}}>{news.title}</h3>
+      <p onClick={()=>onOpen(news)} style={{color:"var(--txt-m)",fontSize:13,lineHeight:1.7,margin:"0 0 11px",cursor:"pointer"}}>{news.summary}</p>
+      <div style={{display:"flex",justifyContent:"space-between",alignItems:"center"}}>
+        <span style={{color:"var(--txt-d)",fontSize:12,fontWeight:600}}>📰 {news.source}</span>
+        <div style={{display:"flex",alignItems:"center",gap:8}}>
+          <span style={{color:"var(--txt-x)",fontSize:11}}>{news.time}</span>
+          <span onClick={()=>onOpen(news)} style={{background:col.bg,border:`1px solid ${col.border}`,borderRadius:8,padding:"3px 9px",color:col.accent,fontSize:11,fontWeight:700,cursor:"pointer"}}>💬 تحليل</span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function NewsDrawer({news,onClose}){
+  const [aiText,setAiText]=useState("");
+  const [aiLoading,setAiLoading]=useState(false);
+  const [note,setNote]=useState("");
+  const [submitted,setSubmitted]=useState(false);
+  const col=gc(news?.countryCode||"INTL");
+  useEffect(()=>{
+    if(!news)return;
+    setAiText("");setNote("");setSubmitted(false);setAiLoading(true);
+    genComment(news.title,news.summary).then(t=>setAiText(t)).catch(()=>setAiText("تعذّر الاتصال.")).finally(()=>setAiLoading(false));
+  },[news?.id]);
+  if(!news)return null;
+  return(
+    <>
+      <div onClick={onClose} style={{position:"absolute",inset:0,background:"var(--overlay)",zIndex:10,backdropFilter:"blur(4px)"}}/>
+      <div style={{position:"absolute",bottom:0,left:0,right:0,zIndex:20,background:"var(--bg-card2)",borderRadius:"22px 22px 0 0",border:"1px solid var(--border)",borderBottom:"none",maxHeight:"80%",display:"flex",flexDirection:"column",animation:"slideUp .28s cubic-bezier(.32,1,.23,1)"}}>
+        <div style={{display:"flex",justifyContent:"center",padding:"11px 0 0"}}><div style={{width:38,height:4,background:"var(--border2)",borderRadius:2}}/></div>
+        <div style={{padding:"10px 20px 0"}}>
+          <div style={{display:"flex",alignItems:"center",gap:7,marginBottom:6}}>
+            <span style={{fontSize:20}}>{news.flag}</span>
+            <span style={{color:col.accent,fontSize:12,fontWeight:700}}>{news.country}</span>
+            <span style={{color:"var(--border2)"}}>·</span>
+            <span style={{color:"var(--txt-d)",fontSize:12}}>{news.source} · {news.time}</span>
+          </div>
+          <h3 style={{color:"var(--txt-p)",fontSize:14.5,fontWeight:700,margin:0,lineHeight:1.55}}>{news.title}</h3>
+        </div>
+        <div style={{overflowY:"auto",flex:1,padding:"0 20px 28px"}}>
+          <div style={{marginTop:14,background:"var(--bg-card)",borderRadius:15,padding:15,border:`1px solid ${col.border}`}}>
+            <div style={{display:"flex",alignItems:"center",gap:7,marginBottom:11}}>
+              <div style={{width:26,height:26,background:col.bg,border:`1px solid ${col.border}`,borderRadius:8,display:"flex",alignItems:"center",justifyContent:"center",fontSize:14}}>🤖</div>
+              <span style={{color:col.accent,fontWeight:700,fontSize:13}}>تحليل Claude AI</span>
+              {aiLoading&&<div style={{width:13,height:13,border:`2px solid ${col.accent}33`,borderTop:`2px solid ${col.accent}`,borderRadius:"50%",animation:"spin .8s linear infinite",marginRight:"auto"}}/>}
+            </div>
+            {aiLoading?[100,82,66].map((w,i)=><div key={i} style={{height:13,background:"var(--bg-chip)",borderRadius:5,width:`${w}%`,marginBottom:8,animation:"pulse 1.4s ease-in-out infinite",animationDelay:`${i*.18}s`}}/>)
+              :<p style={{color:"var(--txt-s)",fontSize:13.5,lineHeight:1.85,margin:0}}>{aiText}</p>}
+          </div>
+          <div style={{display:"flex",alignItems:"center",gap:8,margin:"14px 0"}}>
+            <div style={{flex:1,height:1,background:"var(--bg-chip)"}}/><span style={{color:"var(--txt-x)",fontSize:12}}>تعليقك</span><div style={{flex:1,height:1,background:"var(--bg-chip)"}}/>
+          </div>
+          {submitted?(
+            <div style={{background:"rgba(34,197,94,.08)",border:"1px solid rgba(34,197,94,.3)",borderRadius:14,padding:15,display:"flex",gap:10}}>
+              <span style={{fontSize:22}}>✅</span>
+              <div><div style={{color:"#22C55E",fontWeight:700,fontSize:14}}>نُشر تعليقك!</div><div style={{color:"var(--txt-m)",fontSize:13,marginTop:4,lineHeight:1.6}}>{note}</div></div>
+            </div>
+          ):(
+            <>
+              <textarea value={note} onChange={e=>setNote(e.target.value)} placeholder="شاركنا رأيك..."
+                style={{width:"100%",minHeight:80,background:"var(--bg-card)",border:"1px solid var(--border)",borderRadius:13,padding:"11px 13px",color:"var(--txt-p)",fontSize:13.5,lineHeight:1.7,resize:"none",fontFamily:"inherit",outline:"none",boxSizing:"border-box",direction:"rtl"}}/>
+              <button onClick={()=>note.trim()&&setSubmitted(true)} disabled={!note.trim()}
+                style={{marginTop:9,width:"100%",padding:12,borderRadius:13,border:"none",cursor:note.trim()?"pointer":"not-allowed",
+                  background:note.trim()?`linear-gradient(135deg,${col.accent},${col.accent}cc)`:"var(--bg-chip)",
+                  color:note.trim()?"var(--bg-input)":"var(--txt-x)",fontWeight:700,fontSize:15,fontFamily:"inherit"}}>نشر التعليق ✦</button>
+            </>
+          )}
+        </div>
+      </div>
+    </>
+  );
+}
+
+// ══════════════════════════════════════════════
+//  ANALYSIS ARTICLE READER
+// ══════════════════════════════════════════════
+function ArticleReader({article,onClose}){
+  const col=gc(article.countryCode);
+  const [comment,setComment]=useState("");
+  const [submitted,setSubmitted]=useState(false);
+  const date=new Date(article.publishedAt).toLocaleDateString("ar-EG",{day:"numeric",month:"long",year:"numeric"});
+  return(
+    <div style={{position:"absolute",inset:0,zIndex:40,background:"var(--bg-input)",display:"flex",flexDirection:"column",animation:"slideUp .3s cubic-bezier(.32,1,.23,1)"}}>
+      <div style={{position:"relative",height:200,flexShrink:0,overflow:"hidden",background:"var(--bg-card)"}}>
+        <img src={article.image} alt="" style={{width:"100%",height:"100%",objectFit:"cover",opacity:.75}} onError={e=>{e.target.style.display="none";}}/>
+        <div style={{position:"absolute",inset:0,background:`linear-gradient(to top, var(--bg-shell) 0%, rgba(13,17,23,.4) 60%, transparent 100%)`}}/>
+        <button onClick={onClose} style={{position:"absolute",top:14,right:16,background:"rgba(0,0,0,.6)",backdropFilter:"blur(8px)",border:"1px solid #334155",borderRadius:12,width:38,height:38,cursor:"pointer",color:"#E2E8F0",fontSize:18,display:"flex",alignItems:"center",justifyContent:"center"}}>←</button>
+        <div style={{position:"absolute",top:14,left:16,background:`${col.accent}22`,backdropFilter:"blur(8px)",borderRadius:10,padding:"4px 10px",border:`1px solid ${col.border}`,display:"flex",alignItems:"center",gap:5}}>
+          <span style={{fontSize:16}}>{article.flag}</span><span style={{color:col.accent,fontSize:12,fontWeight:700}}>{article.country}</span>
+        </div>
+        <div style={{position:"absolute",bottom:12,right:16,left:16,display:"flex",gap:5,flexWrap:"wrap"}}>
+          {article.tags.map(t=><span key={t} style={{background:"rgba(0,0,0,.5)",backdropFilter:"blur(6px)",color:col.accent,fontSize:10,fontWeight:600,padding:"2px 8px",borderRadius:20,border:`1px solid ${col.border}`}}>#{t}</span>)}
+        </div>
+      </div>
+      <div style={{flex:1,overflowY:"auto",padding:"0 20px 30px"}}>
+        <h1 style={{color:"var(--txt-h)",fontSize:18,fontWeight:800,lineHeight:1.5,margin:"16px 0 12px"}}>{article.title}</h1>
+        <div style={{display:"flex",alignItems:"center",gap:10,marginBottom:18,paddingBottom:14,borderBottom:"1px solid var(--border)"}}>
+          <div style={{width:34,height:34,background:`linear-gradient(135deg,${col.accent}44,${col.accent}11)`,border:`1px solid ${col.border}`,borderRadius:"50%",display:"flex",alignItems:"center",justifyContent:"center",fontSize:15,flexShrink:0}}>✍️</div>
+          <div style={{flex:1}}>
+            <div style={{color:"var(--txt-p)",fontSize:13,fontWeight:700}}>{article.author}</div>
+            <div style={{color:"var(--txt-x)",fontSize:11,marginTop:1}}>{date} · {article.readTime}</div>
+          </div>
+          <div style={{background:col.bg,border:`1px solid ${col.border}`,borderRadius:10,padding:"4px 10px",display:"flex",alignItems:"center",gap:4}}>
+            <span style={{color:col.accent,fontSize:11,fontWeight:700}}>🏛️ تحليل</span>
+          </div>
+        </div>
+        {article.body.split("\n\n").map((p,i)=>p.trim()&&(
+          <p key={i} style={{color:i===0?"var(--txt-s)":"var(--txt-m)",fontSize:i===0?14.5:13.5,lineHeight:1.9,margin:"0 0 16px",fontWeight:i===0?500:400,textAlign:"justify"}}>{p.trim()}</p>
+        ))}
+        <div style={{display:"flex",alignItems:"center",gap:8,margin:"18px 0 16px"}}>
+          <div style={{flex:1,height:1,background:"var(--bg-chip)"}}/><span style={{color:col.accent,fontSize:13}}>✦</span><div style={{flex:1,height:1,background:"var(--bg-chip)"}}/>
+        </div>
+        <div style={{background:"var(--bg-card)",borderRadius:16,padding:16,border:"1px solid var(--border)"}}>
+          <div style={{color:"var(--txt-m)",fontSize:12,fontWeight:700,marginBottom:12}}>💬 أضف تعليقك</div>
+          {submitted?(
+            <div style={{background:"rgba(34,197,94,.08)",border:"1px solid rgba(34,197,94,.3)",borderRadius:12,padding:14,display:"flex",gap:10}}>
+              <span style={{fontSize:20}}>✅</span>
+              <div><div style={{color:"#22C55E",fontWeight:700,fontSize:13}}>شكراً على مشاركتك!</div><div style={{color:"var(--txt-m)",fontSize:12.5,marginTop:4,lineHeight:1.6}}>{comment}</div></div>
+            </div>
+          ):(
+            <>
+              <textarea value={comment} onChange={e=>setComment(e.target.value)} placeholder="شاركنا رأيك في هذا التحليل..."
+                style={{width:"100%",minHeight:90,background:"var(--bg-input)",border:"1px solid var(--border)",borderRadius:12,padding:"11px 13px",color:"var(--txt-p)",fontSize:13.5,lineHeight:1.7,resize:"none",fontFamily:"inherit",outline:"none",boxSizing:"border-box",direction:"rtl"}}/>
+              <button onClick={()=>comment.trim()&&setSubmitted(true)} disabled={!comment.trim()}
+                style={{marginTop:10,width:"100%",padding:12,borderRadius:12,border:"none",cursor:comment.trim()?"pointer":"not-allowed",
+                  background:comment.trim()?`linear-gradient(135deg,${col.accent},${col.accent}cc)`:"var(--bg-chip)",
+                  color:comment.trim()?"var(--bg-input)":"var(--txt-x)",fontWeight:700,fontSize:14,fontFamily:"inherit"}}>إرسال التعليق ✦</button>
+            </>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ══════════════════════════════════════════════
+//  ANALYSIS CARD
+// ══════════════════════════════════════════════
+function AnalysisCard({article,onClick}){
+  const col=gc(article.countryCode);
+  const date=new Date(article.publishedAt).toLocaleDateString("ar-EG",{day:"numeric",month:"long"});
+  return(
+    <div onClick={()=>onClick(article)} style={{background:"var(--bg-card)",border:"1px solid var(--border)",borderRadius:20,overflow:"hidden",marginBottom:16,cursor:"pointer"}}>
+      <div style={{position:"relative",height:160,overflow:"hidden",background:"var(--bg-input)"}}>
+        <img src={article.image} alt="" style={{width:"100%",height:"100%",objectFit:"cover",opacity:.85}} onError={e=>{e.target.style.display="none";}}/>
+        <div style={{position:"absolute",inset:0,background:`linear-gradient(to top, var(--bg-card) 0%, transparent 55%)`}}/>
+        <div style={{position:"absolute",top:12,right:14,background:"rgba(0,0,0,.6)",backdropFilter:"blur(8px)",borderRadius:10,padding:"4px 10px",display:"flex",alignItems:"center",gap:5,border:`1px solid ${col.border}`}}>
+          <span style={{fontSize:14}}>{article.flag}</span><span style={{color:col.accent,fontSize:11,fontWeight:700}}>{article.country}</span>
+        </div>
+        <div style={{position:"absolute",top:12,left:14,background:"rgba(0,0,0,.6)",backdropFilter:"blur(8px)",borderRadius:10,padding:"4px 10px"}}>
+          <span style={{color:"var(--txt-m)",fontSize:11}}>⏱ {article.readTime}</span>
+        </div>
+      </div>
+      <div style={{padding:"14px 16px 16px"}}>
+        <h3 style={{color:"var(--txt-p)",fontSize:15,fontWeight:800,margin:"0 0 8px",lineHeight:1.5}}>{article.title}</h3>
+        <p style={{color:"var(--txt-d)",fontSize:12.5,lineHeight:1.65,margin:"0 0 12px",overflow:"hidden",display:"-webkit-box",WebkitLineClamp:2,WebkitBoxOrient:"vertical"}}>{article.body.substring(0,130)}...</p>
+        <div style={{display:"flex",justifyContent:"space-between",alignItems:"center"}}>
+          <div style={{display:"flex",alignItems:"center",gap:7}}>
+            <div style={{width:28,height:28,background:`linear-gradient(135deg,${col.accent}33,${col.accent}11)`,border:`1px solid ${col.border}`,borderRadius:"50%",display:"flex",alignItems:"center",justifyContent:"center",fontSize:13}}>✍️</div>
+            <div><div style={{color:"var(--txt-p)",fontSize:11.5,fontWeight:700}}>{article.author}</div><div style={{color:"var(--txt-x)",fontSize:10}}>{date}</div></div>
+          </div>
+          <div style={{display:"flex",gap:5,flexWrap:"wrap",justifyContent:"flex-end"}}>
+            {article.tags.slice(0,2).map(t=><span key={t} style={{background:col.bg,color:col.accent,fontSize:10,fontWeight:600,padding:"2px 8px",borderRadius:20,border:`1px solid ${col.border}`}}>#{t}</span>)}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ══════════════════════════════════════════════
+//  SCREENS
+// ══════════════════════════════════════════════
+function HomeScreen({news,loading,onRefresh,lastUpdate,savedIds,onSave,onOpen,activeCountry,setActive}){
+  const urgentCount=news.filter(n=>n.urgent).length;
+  const cm={};
+  news.forEach(n=>{if(!cm[n.country])cm[n.country]={flag:n.flag,code:n.countryCode,count:0};cm[n.country].count++;});
+  const countries=["الكل",...Object.keys(cm)];
+  const filtered=activeCountry==="الكل"?news:news.filter(n=>n.country===activeCountry);
+  return(
+    <>
+      <div style={{padding:"12px 20px 0",display:"flex",alignItems:"center",justifyContent:"space-between",flexShrink:0}}>
+        <div style={{display:"flex",alignItems:"center",gap:8}}>
+          <div style={{width:32,height:32,background:"linear-gradient(135deg,#2563EB,#7C3AED)",borderRadius:10,display:"flex",alignItems:"center",justifyContent:"center",fontSize:16}}>📡</div>
+          <div>
+            <div style={{color:"var(--txt-h)",fontWeight:800,fontSize:17,letterSpacing:-0.5}}>نبض الأخبار</div>
+            <div style={{color:"var(--txt-d)",fontSize:10.5}}>Workflow 1 · n8n</div>
+          </div>
+        </div>
+        <div style={{display:"flex",gap:8,alignItems:"center"}}>
+          <div style={{background:"var(--bg-chip)",borderRadius:12,padding:"4px 10px",display:"flex",alignItems:"center",gap:4}}>
+            <div style={{width:7,height:7,background:"#22C55E",borderRadius:"50%",animation:"pulse 2s infinite"}}/>
+            <span style={{color:"var(--txt-m)",fontSize:11,fontWeight:600}}>{news.length} خبر</span>
+          </div>
+          <button onClick={onRefresh} disabled={loading} style={{background:"none",border:"none",cursor:"pointer",color:"#2563EB",fontSize:22,padding:4,opacity:loading?0.5:1}}>⟳</button>
+        </div>
+      </div>
+      {urgentCount>0&&(
+        <div style={{margin:"10px 20px 0",background:"var(--urgent-bg)",border:"1px solid var(--urgent-brd)",borderRadius:12,padding:"7px 13px",display:"flex",alignItems:"center",gap:7,flexShrink:0}}>
+          <div style={{width:8,height:8,background:"#DC2626",borderRadius:"50%",animation:"pulse 1s infinite"}}/>
+          <span style={{color:"#FCA5A5",fontSize:12,fontWeight:700}}>{urgentCount} خبر عاجل</span>
+        </div>
+      )}
+      <div style={{padding:"11px 20px 0",overflowX:"auto",display:"flex",gap:7,flexShrink:0}}>
+        {countries.map(c=>{const meta=cm[c];const col=gc(meta?.code||"XX");return(
+          <CountryTab key={c} label={c} flag={c==="الكل"?"🌍":meta?.flag} active={activeCountry===c} onClick={()=>setActive(c)} accent={col.accent} count={c!=="الكل"?meta?.count:0}/>
+        );})}
+      </div>
+      <div style={{padding:"12px 20px 5px",display:"flex",justifyContent:"space-between",alignItems:"center",flexShrink:0}}>
+        <span style={{color:"var(--txt-p)",fontWeight:800,fontSize:15}}>{activeCountry==="الكل"?"جميع الأخبار":`أخبار ${activeCountry}`}</span>
+        <span style={{color:"var(--txt-x)",fontSize:11}}>آخر تحديث {lastUpdate.toLocaleTimeString("ar-EG",{hour:"2-digit",minute:"2-digit"})}</span>
+      </div>
+      <div style={{flex:1,overflowY:"auto",padding:"0 20px 20px"}}>
+        {loading?[1,2,3].map(i=>(
+          <div key={i} style={{background:"var(--bg-card)",borderRadius:18,padding:18,marginBottom:13,animation:"pulse 1.4s ease-in-out infinite",animationDelay:`${i*.15}s`}}>
+            <div style={{height:13,background:"var(--bg-chip)",borderRadius:5,width:"40%",marginBottom:11}}/>
+            <div style={{height:17,background:"var(--bg-chip)",borderRadius:5,width:"88%",marginBottom:8}}/>
+            <div style={{height:13,background:"var(--bg-chip)",borderRadius:5,width:"72%"}}/>
+          </div>
+        )):filtered.map((n,i)=>(
+          <div key={n.id} style={{animation:`fadeIn .3s ease both`,animationDelay:`${i*.05}s`}}>
+            <NewsCard news={n} saved={savedIds.has(n.id)} onSave={onSave} onOpen={onOpen}/>
+          </div>
+        ))}
+      </div>
+    </>
+  );
+}
+
+function AnalysesScreen({analyses,loading,onRefresh,lastUpdate}){
+  const [activeCountry,setActive]=useState("الكل");
+  const [openArticle,setOpenArticle]=useState(null);
+  const cm={};
+  analyses.forEach(a=>{if(!cm[a.country])cm[a.country]={flag:a.flag,code:a.countryCode,count:0};cm[a.country].count++;});
+  const countries=["الكل",...Object.keys(cm)];
+  const filtered=activeCountry==="الكل"?analyses:analyses.filter(a=>a.country===activeCountry);
+  return(
+    <>
+      {openArticle&&<ArticleReader article={openArticle} onClose={()=>setOpenArticle(null)}/>}
+      <div style={{padding:"12px 20px 0",display:"flex",alignItems:"center",justifyContent:"space-between",flexShrink:0}}>
+        <div style={{display:"flex",alignItems:"center",gap:8}}>
+          <div style={{width:32,height:32,background:"linear-gradient(135deg,#7C3AED,#EC4899)",borderRadius:10,display:"flex",alignItems:"center",justifyContent:"center",fontSize:16}}>🏛️</div>
+          <div>
+            <div style={{color:"var(--txt-h)",fontWeight:800,fontSize:17,letterSpacing:-0.5}}>التحاليل السياسية</div>
+            <div style={{color:"var(--txt-d)",fontSize:10.5}}>Workflow 2 · n8n</div>
+          </div>
+        </div>
+        <div style={{display:"flex",gap:8,alignItems:"center"}}>
+          <div style={{background:"var(--bg-chip)",borderRadius:12,padding:"4px 10px",display:"flex",alignItems:"center",gap:4}}>
+            <div style={{width:7,height:7,background:"#A78BFA",borderRadius:"50%",animation:"pulse 2s infinite"}}/>
+            <span style={{color:"var(--txt-m)",fontSize:11,fontWeight:600}}>{analyses.length} مقال</span>
+          </div>
+          <button onClick={onRefresh} disabled={loading} style={{background:"none",border:"none",cursor:"pointer",color:"#7C3AED",fontSize:22,padding:4,opacity:loading?0.5:1}}>⟳</button>
+        </div>
+      </div>
+      <div style={{padding:"11px 20px 0",overflowX:"auto",display:"flex",gap:7,flexShrink:0}}>
+        {countries.map(c=>{const meta=cm[c];const col=gc(meta?.code||"XX");return(
+          <CountryTab key={c} label={c} flag={c==="الكل"?"🌍":meta?.flag} active={activeCountry===c} onClick={()=>setActive(c)} accent={c==="الكل"?"#7C3AED":col.accent} count={c!=="الكل"?meta?.count:0}/>
+        );})}
+      </div>
+      <div style={{padding:"12px 20px 5px",display:"flex",justifyContent:"space-between",alignItems:"center",flexShrink:0}}>
+        <span style={{color:"var(--txt-p)",fontWeight:800,fontSize:15}}>{activeCountry==="الكل"?"جميع المقالات":`مقالات ${activeCountry}`}</span>
+        <span style={{color:"var(--txt-x)",fontSize:11}}>آخر تحديث {lastUpdate.toLocaleTimeString("ar-EG",{hour:"2-digit",minute:"2-digit"})}</span>
+      </div>
+      <div style={{flex:1,overflowY:"auto",padding:"0 20px 20px"}}>
+        {loading?[1,2].map(i=>(
+          <div key={i} style={{background:"var(--bg-card)",borderRadius:20,overflow:"hidden",marginBottom:16,animation:"pulse 1.4s ease-in-out infinite"}}>
+            <div style={{height:160,background:"var(--bg-chip)"}}/>
+            <div style={{padding:"14px 16px 16px"}}>
+              <div style={{height:18,background:"var(--bg-chip)",borderRadius:6,width:"85%",marginBottom:10}}/>
+              <div style={{height:13,background:"var(--bg-chip)",borderRadius:5,width:"65%"}}/>
+            </div>
+          </div>
+        )):filtered.map((a,i)=>(
+          <div key={a.id} style={{animation:`fadeIn .3s ease both`,animationDelay:`${i*.07}s`}}>
+            <AnalysisCard article={a} onClick={setOpenArticle}/>
+          </div>
+        ))}
+      </div>
+    </>
+  );
+}
+
+function NotificationsScreen({news,onBack}){
+  const urgent=news.filter(n=>n.urgent);
+  return(
+    <div style={{flex:1,display:"flex",flexDirection:"column",overflow:"hidden"}}>
+      <div style={{padding:"14px 20px 12px",display:"flex",alignItems:"center",gap:12,flexShrink:0}}>
+        <button onClick={onBack} style={{background:"var(--bg-chip)",border:"none",cursor:"pointer",color:"var(--txt-m)",fontSize:18,width:34,height:34,borderRadius:10,display:"flex",alignItems:"center",justifyContent:"center"}}>←</button>
+        <div style={{color:"var(--txt-p)",fontWeight:800,fontSize:16}}>التنبيهات</div>
+      </div>
+      <div style={{overflowY:"auto",flex:1,padding:"0 20px 20px"}}>
+        {urgent.length>0&&<>
+          <div style={{color:"var(--txt-m)",fontSize:11,fontWeight:700,marginBottom:10,letterSpacing:1}}>⚡ عاجل</div>
+          {urgent.map(n=>{const col=gc(n.countryCode);return(
+            <div key={n.id} style={{background:"rgba(220,38,38,.08)",border:"1px solid rgba(220,38,38,.25)",borderRadius:14,padding:"12px 14px",marginBottom:10,display:"flex",gap:10}}>
+              <div style={{width:36,height:36,background:"rgba(220,38,38,.15)",borderRadius:10,display:"flex",alignItems:"center",justifyContent:"center",fontSize:18,flexShrink:0}}>🔴</div>
+              <div><div style={{color:"#FCA5A5",fontSize:12,fontWeight:700,marginBottom:3}}>{n.flag} {n.country}</div><div style={{color:"var(--txt-p)",fontSize:13,fontWeight:600,lineHeight:1.4}}>{n.title}</div><div style={{color:"var(--txt-d)",fontSize:11,marginTop:4}}>{n.time}</div></div>
+            </div>
+          );})}
+        </>}
+        <div style={{color:"var(--txt-m)",fontSize:11,fontWeight:700,margin:"16px 0 10px",letterSpacing:1}}>🕐 الأحدث</div>
+        {news.slice(0,5).map(n=>{const col=gc(n.countryCode);return(
+          <div key={n.id} style={{background:"var(--bg-card)",border:"1px solid var(--border)",borderRadius:14,padding:"12px 14px",marginBottom:10,display:"flex",gap:10}}>
+            <div style={{width:36,height:36,background:col.bg,border:`1px solid ${col.border}`,borderRadius:10,display:"flex",alignItems:"center",justifyContent:"center",fontSize:18,flexShrink:0}}>{n.flag}</div>
+            <div style={{flex:1}}><div style={{color:col.accent,fontSize:12,fontWeight:700,marginBottom:3}}>{n.country} · {n.category}</div><div style={{color:"var(--txt-p)",fontSize:13,lineHeight:1.4}}>{n.title}</div><div style={{color:"var(--txt-d)",fontSize:11,marginTop:4}}>{n.time}</div></div>
+          </div>
+        );})}
+      </div>
+    </div>
+  );
+}
+
+function SavedScreen({saved,onUnsave,onOpen,onBack}){
+  return(
+    <div style={{flex:1,display:"flex",flexDirection:"column",overflow:"hidden"}}>
+      <div style={{padding:"14px 20px 12px",display:"flex",alignItems:"center",gap:12,flexShrink:0}}>
+        <button onClick={onBack} style={{background:"var(--bg-chip)",border:"none",cursor:"pointer",color:"var(--txt-m)",fontSize:18,width:34,height:34,borderRadius:10,display:"flex",alignItems:"center",justifyContent:"center"}}>←</button>
+        <div style={{color:"var(--txt-p)",fontWeight:800,fontSize:16}}>المحفوظات</div>
+        <div style={{marginRight:"auto",background:"var(--bg-chip)",borderRadius:10,padding:"3px 10px"}}>
+          <span style={{color:"var(--txt-m)",fontSize:11,fontWeight:600}}>{saved.length} خبر</span>
+        </div>
+      </div>
+      <div style={{overflowY:"auto",flex:1,padding:"0 20px 20px"}}>
+        {saved.length===0?(
+          <div style={{display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",padding:"60px 20px",gap:12}}>
+            <div style={{fontSize:48}}>🔖</div>
+            <div style={{color:"var(--txt-d)",fontSize:15,fontWeight:700}}>لا توجد أخبار محفوظة</div>
+            <div style={{color:"var(--txt-x)",fontSize:13,textAlign:"center"}}>اضغط على 🔖 في أي خبر لحفظه هنا.</div>
+          </div>
+        ):saved.map(n=>{const col=gc(n.countryCode);return(
+          <div key={n.id} style={{background:"var(--bg-card)",border:"1px solid var(--border)",borderRadius:18,padding:"14px 16px",marginBottom:13,position:"relative",overflow:"hidden"}}>
+            <div style={{position:"absolute",right:0,top:0,bottom:0,width:4,background:col.accent,borderRadius:"0 18px 18px 0"}}/>
+            <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",marginBottom:7}}>
+              <span style={{background:col.bg,color:col.accent,fontSize:11,fontWeight:600,padding:"2px 9px",borderRadius:50,border:`1px solid ${col.border}`}}>{n.flag} {n.country}</span>
+              <button onClick={()=>onUnsave(n.id)} style={{background:"none",border:"none",cursor:"pointer",color:"#F59E0B",fontSize:16,padding:0}}>🔖</button>
+            </div>
+            <div onClick={()=>onOpen(n)} style={{color:"var(--txt-p)",fontSize:14,fontWeight:700,lineHeight:1.5,marginBottom:6,cursor:"pointer"}}>{n.title}</div>
+            <div style={{color:"var(--txt-d)",fontSize:11}}>{n.source} · {n.time}</div>
+          </div>
+        );})}
+      </div>
+    </div>
+  );
+}
+
+function SettingsScreen({onBack,wh1,setWh1,wh2,setWh2,wh3,setWh3,wh4,setWh4,ri,setRi,dark,setDark,isAdmin,setIsAdmin}){
+  const [l1,setL1]=useState(wh1);
+  const [l2,setL2]=useState(wh2);
+  const [l3,setL3]=useState(wh3);
+  const [l4,setL4]=useState(wh4);
+  const [saved,setSaved]=useState(false);
+  const [showLogin,setShowLogin]=useState(false);
+  const [loginId,setLoginId]=useState("");
+  const [loginPw,setLoginPw]=useState("");
+  const [loginErr,setLoginErr]=useState("");
+  const [loginOk,setLoginOk]=useState(false);
+
+  const itvs=[{label:"كل دقيقة",val:60},{label:"كل 5 دقائق",val:300},{label:"كل 15 دقيقة",val:900},{label:"كل ساعة",val:3600}];
+
+  const V={
+    bg:"var(--bg-card)", bgInput:"var(--bg-input)",
+    border:"var(--border)", border2:"var(--border2)",
+    chip:"var(--bg-chip)",
+    h:"var(--txt-p)", m:"var(--txt-m)", d:"var(--txt-d)",
+  };
+
+  const saveAdmin=()=>{
+    setWh1(l1);setWh2(l2);setWh3(l3);setWh4(l4);
+    localStorage.setItem("wh1",l1);
+    localStorage.setItem("wh2",l2);
+    localStorage.setItem("wh3",l3);
+    localStorage.setItem("wh4",l4);
+    setSaved(true);
+    setTimeout(()=>setSaved(false),2500);
+  };
+
+  const doLogin=()=>{
+    if(loginId==="admin2026"&&loginPw==="admin2026"){
+      setIsAdmin(true);
+      localStorage.setItem("isAdmin","1");
+      setLoginOk(true);
+      setLoginErr("");
+      setTimeout(()=>{setShowLogin(false);setLoginOk(false);setLoginId("");setLoginPw("");},1200);
+    } else {
+      setLoginErr("معرّف أو كلمة مرور غير صحيحة");
+      setTimeout(()=>setLoginErr(""),2500);
+    }
+  };
+
+  const doLogout=()=>{
+    setIsAdmin(false);
+    localStorage.removeItem("isAdmin");
+    setShowLogin(false);
+  };
+
+  return(
+    <div style={{flex:1,display:"flex",flexDirection:"column",overflow:"hidden",transition:"background .25s"}}>
+      {/* Header */}
+      <div style={{padding:"14px 20px 12px",display:"flex",alignItems:"center",gap:12,flexShrink:0}}>
+        <button onClick={onBack} style={{background:V.chip,border:"none",cursor:"pointer",color:V.m,fontSize:18,width:34,height:34,borderRadius:10,display:"flex",alignItems:"center",justifyContent:"center"}}>←</button>
+        <div style={{color:V.h,fontWeight:800,fontSize:16}}>الإعدادات</div>
+        {isAdmin&&(
+          <div style={{marginRight:"auto",background:"rgba(37,99,235,.12)",border:"1px solid rgba(37,99,235,.3)",borderRadius:20,padding:"3px 10px",display:"flex",alignItems:"center",gap:5}}>
+            <span style={{fontSize:10}}>🔑</span>
+            <span style={{color:"#60A5FA",fontSize:11,fontWeight:700}}>مدير</span>
+          </div>
+        )}
+      </div>
+
+      <div style={{overflowY:"auto",flex:1,padding:"0 20px 20px",display:"flex",flexDirection:"column",gap:14}}>
+
+        {/* ── DARK MODE ── */}
+        <div style={{background:V.bg,borderRadius:16,padding:"14px 16px",border:`1px solid ${V.border}`}}>
+          <div style={{color:V.m,fontSize:11,fontWeight:700,marginBottom:14,letterSpacing:1}}>🎨 المظهر</div>
+          <div style={{display:"flex",alignItems:"center",justifyContent:"space-between"}}>
+            <div style={{display:"flex",alignItems:"center",gap:10}}>
+              <div style={{width:36,height:36,borderRadius:10,background:dark?"rgba(37,99,235,.15)":"rgba(251,191,36,.12)",border:`1px solid ${dark?"rgba(37,99,235,.3)":"rgba(251,191,36,.3)"}`,display:"flex",alignItems:"center",justifyContent:"center",fontSize:18,transition:"all .3s"}}>
+                {dark?"🌙":"☀️"}
+              </div>
+              <div>
+                <div style={{color:V.h,fontSize:14,fontWeight:700}}>{dark?"الوضع الداكن":"الوضع الفاتح"}</div>
+                <div style={{color:V.d,fontSize:11,marginTop:2}}>{dark?"مريح للعيون ليلاً":"أوضح في الضوء"}</div>
+              </div>
+            </div>
+            <label className="theme-toggle" title="تبديل المظهر">
+              <input type="checkbox" checked={dark} onChange={e=>setDark(e.target.checked)} style={{position:"absolute",opacity:0,width:0,height:0}}/>
+              <div className="theme-track">
+                <span style={{fontSize:10}}>☀️</span>
+                <span style={{fontSize:10}}>🌙</span>
+              </div>
+              <div className="theme-thumb">{dark?"🌙":"☀️"}</div>
+            </label>
+          </div>
+        </div>
+
+        {/* ── ADMIN FIELDS ── */}
+        {isAdmin&&(<>
+          <div style={{background:V.bg,borderRadius:16,padding:16,border:`1px solid ${V.border}`}}>
+            <div style={{color:V.m,fontSize:11,fontWeight:700,marginBottom:12,letterSpacing:1}}>📡 Workflow 1 — الأخبار</div>
+            <input value={l1} onChange={e=>setL1(e.target.value)} placeholder="https://n8n.example.com/webhook/news"
+              style={{width:"100%",background:V.bgInput,border:`1px solid ${V.border2}`,borderRadius:10,padding:"9px 12px",color:V.h,fontSize:11.5,fontFamily:"monospace",outline:"none",boxSizing:"border-box",direction:"ltr"}}/>
+          </div>
+
+          <div style={{background:V.bg,borderRadius:16,padding:16,border:"1px solid rgba(124,58,237,.3)"}}>
+            <div style={{color:"#A78BFA",fontSize:11,fontWeight:700,marginBottom:12,letterSpacing:1}}>🏛️ Workflow 2 — التحاليل السياسية</div>
+            <input value={l2} onChange={e=>setL2(e.target.value)} placeholder="https://n8n.example.com/webhook/analyses"
+              style={{width:"100%",background:V.bgInput,border:`1px solid ${V.border2}`,borderRadius:10,padding:"9px 12px",color:V.h,fontSize:11.5,fontFamily:"monospace",outline:"none",boxSizing:"border-box",direction:"ltr"}}/>
+          </div>
+
+          <div style={{background:V.bg,borderRadius:16,padding:16,border:"1px solid rgba(245,158,11,.3)"}}>
+            <div style={{color:"#F59E0B",fontSize:11,fontWeight:700,marginBottom:12,letterSpacing:1}}>📋 Workflow 3 — جلب المحتوى للمراجعة</div>
+            <div style={{color:V.d,fontSize:11,marginBottom:6}}>GET — يجلب الأخبار والمقالات في انتظار الموافقة</div>
+            <input value={l3} onChange={e=>setL3(e.target.value)} placeholder="https://n8n.example.com/webhook/review"
+              style={{width:"100%",background:V.bgInput,border:`1px solid ${V.border2}`,borderRadius:10,padding:"9px 12px",color:V.h,fontSize:11.5,fontFamily:"monospace",outline:"none",boxSizing:"border-box",direction:"ltr"}}/>
+          </div>
+
+          <div style={{background:V.bg,borderRadius:16,padding:16,border:"1px solid rgba(239,68,68,.3)"}}>
+            <div style={{color:"#F87171",fontSize:11,fontWeight:700,marginBottom:12,letterSpacing:1}}>📤 Workflow 3 — إرسال قرار المدير</div>
+            <div style={{color:V.d,fontSize:11,marginBottom:6}}>POST — يرسل قرار النشر أو الرفض مع التعديلات</div>
+            <input value={l4} onChange={e=>setL4(e.target.value)} placeholder="https://n8n.example.com/webhook/review-action"
+              style={{width:"100%",background:V.bgInput,border:`1px solid ${V.border2}`,borderRadius:10,padding:"9px 12px",color:V.h,fontSize:11.5,fontFamily:"monospace",outline:"none",boxSizing:"border-box",direction:"ltr"}}/>
+            <div style={{marginTop:8,background:"rgba(239,68,68,.05)",borderRadius:8,padding:"8px 10px",border:"1px solid rgba(239,68,68,.1)"}}>
+              <div style={{color:"#F87171",fontSize:10,fontWeight:700,marginBottom:4}}>Payload envoyé :</div>
+              <pre style={{color:V.d,fontSize:9.5,margin:0,direction:"ltr",fontFamily:"monospace",lineHeight:1.6}}>{`{ "id", "type", "validation": true/false,\n  "validated_at", "content": {...} }`}</pre>
+            </div>
+          </div>
+
+          <div style={{background:V.bg,borderRadius:16,padding:16,border:`1px solid ${V.border}`}}>
+            <div style={{color:V.m,fontSize:11,fontWeight:700,marginBottom:12,letterSpacing:1}}>⏱️ تكرار التحديث</div>
+            <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:8}}>
+              {itvs.map(it=>(
+                <button key={it.val} onClick={()=>setRi(it.val)} style={{padding:"10px 8px",borderRadius:10,
+                  border:`1px solid ${ri===it.val?"#2563EB":V.border}`,cursor:"pointer",
+                  background:ri===it.val?"rgba(37,99,235,.15)":V.bgInput,
+                  color:ri===it.val?"#60A5FA":V.d,fontWeight:ri===it.val?700:500,fontSize:12,fontFamily:"inherit",transition:"all .2s"}}>
+                  {it.label}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <button onClick={saveAdmin} style={{padding:"13px",borderRadius:13,border:"none",cursor:"pointer",
+            background:saved?"rgba(34,197,94,.15)":"linear-gradient(135deg,#2563EB,#7C3AED)",
+            color:saved?"#22C55E":"#fff",fontWeight:700,fontSize:14,fontFamily:"inherit",transition:"all .3s"}}>
+            {saved?"✅ تم الحفظ وسيظهر للجميع":"💾 حفظ وتطبيق على الجميع"}
+          </button>
+        </>)}
+
+        {/* ── ABOUT ── */}
+        <div style={{background:V.bg,borderRadius:16,padding:16,border:`1px solid ${V.border}`}}>
+          <div style={{color:V.m,fontSize:11,fontWeight:700,marginBottom:14,letterSpacing:1}}>ℹ️ عن التطبيق</div>
+          <div style={{display:"flex",alignItems:"center",gap:12,marginBottom:14,paddingBottom:14,borderBottom:`1px solid ${V.border}`}}>
+            <div style={{width:44,height:44,background:"linear-gradient(135deg,#2563EB,#7C3AED)",borderRadius:12,display:"flex",alignItems:"center",justifyContent:"center",fontSize:22,flexShrink:0}}>📡</div>
+            <div>
+              <div style={{color:V.h,fontWeight:800,fontSize:15}}>نبض الأخبار</div>
+              <div style={{color:"#2563EB",fontSize:11,fontWeight:700,marginTop:2}}>الإصدار 3.2.0 · PWA</div>
+            </div>
+          </div>
+          <div style={{background:dark?"rgba(37,99,235,.06)":"rgba(37,99,235,.04)",borderRadius:12,padding:"12px 14px",marginBottom:14,border:`1px solid ${dark?"rgba(37,99,235,.15)":"rgba(37,99,235,.1)"}`}}>
+            <p style={{color:V.d,fontSize:13,lineHeight:1.8,margin:0}}>
+              منصة إخبارية عربية تجمع أهم الأخبار العالمية مُبوَّبةً حسب البلد، مع تحاليل سياسية معمّقة مدعومة بالذكاء الاصطناعي — لتبقى مُطَّلعاً على آخر المستجدات من مصادر موثوقة.
+            </p>
+          </div>
+        </div>
+
+        {/* ── ADMIN LOGIN / LOGOUT ── */}
+        <div style={{background:V.bg,borderRadius:16,padding:16,border:`1px solid ${isAdmin?"rgba(37,99,235,.3)":V.border}`}}>
+          <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:isAdmin||showLogin?14:0}}>
+            <div style={{display:"flex",alignItems:"center",gap:8}}>
+              <span style={{fontSize:16}}>{isAdmin?"🔓":"🔒"}</span>
+              <div>
+                <div style={{color:V.h,fontSize:13,fontWeight:700}}>{isAdmin?"وضع المدير مُفعَّل":"وصول المدير"}</div>
+                <div style={{color:V.d,fontSize:11,marginTop:1}}>{isAdmin?"يمكنك تعديل جميع الإعدادات":"للمستخدمين المخوَّلين فقط"}</div>
+              </div>
+            </div>
+            {!isAdmin?(
+              <button onClick={()=>setShowLogin(s=>!s)} style={{background:"rgba(37,99,235,.12)",border:"1px solid rgba(37,99,235,.3)",borderRadius:10,padding:"6px 12px",cursor:"pointer",color:"#60A5FA",fontSize:12,fontWeight:700,fontFamily:"inherit"}}>
+                {showLogin?"إلغاء":"تسجيل دخول"}
+              </button>
+            ):(
+              <button onClick={doLogout} style={{background:"rgba(220,38,38,.1)",border:"1px solid rgba(220,38,38,.25)",borderRadius:10,padding:"6px 12px",cursor:"pointer",color:"#F87171",fontSize:12,fontWeight:700,fontFamily:"inherit"}}>
+                خروج
+              </button>
+            )}
+          </div>
+
+          {!isAdmin&&showLogin&&(
+            <div style={{display:"flex",flexDirection:"column",gap:10,animation:"fadeIn .2s ease"}}>
+              <input value={loginId} onChange={e=>{setLoginId(e.target.value);setLoginErr("");}}
+                placeholder="المعرّف"
+                style={{width:"100%",background:V.bgInput,border:`1px solid ${loginErr?"#F87171":V.border2}`,borderRadius:10,padding:"10px 12px",color:V.h,fontSize:13,fontFamily:"inherit",outline:"none",boxSizing:"border-box",direction:"ltr"}}/>
+              <input type="password" value={loginPw} onChange={e=>{setLoginPw(e.target.value);setLoginErr("");}}
+                placeholder="كلمة المرور"
+                onKeyDown={e=>e.key==="Enter"&&doLogin()}
+                style={{width:"100%",background:V.bgInput,border:`1px solid ${loginErr?"#F87171":V.border2}`,borderRadius:10,padding:"10px 12px",color:V.h,fontSize:13,fontFamily:"inherit",outline:"none",boxSizing:"border-box",direction:"ltr"}}/>
+              {loginErr&&<div style={{color:"#F87171",fontSize:12,fontWeight:600,textAlign:"center"}}>{loginErr}</div>}
+              {loginOk&&<div style={{color:"#22C55E",fontSize:12,fontWeight:700,textAlign:"center"}}>✅ مرحباً بك أيها المدير!</div>}
+              <button onClick={doLogin} style={{padding:"11px",borderRadius:10,border:"none",cursor:"pointer",background:"linear-gradient(135deg,#2563EB,#7C3AED)",color:"#fff",fontWeight:700,fontSize:14,fontFamily:"inherit"}}>
+                دخول 🔑
+              </button>
+            </div>
+          )}
+        </div>
+
+      </div>
+    </div>
+  );
+}
+
+// ══════════════════════════════════════════════
+//  CONTENT REVIEW — admin only (Workflow 3)
+// ══════════════════════════════════════════════
+const MOCK_PENDING = [];
+
+function ReviewScreen({wh3,wh4,dark,onBack}){
+  const [items,setItems]=useState([]);
+  const [loading,setLoading]=useState(false);
+  const [editingId,setEditingId]=useState(null);
+  const [sendingId,setSendingId]=useState(null);
+  const [doneIds,setDoneIds]=useState({});
+
+  const V={
+    bg:"var(--bg-card)",bgInput:"var(--bg-input)",
+    border:"var(--border)",border2:"var(--border2)",
+    chip:"var(--bg-chip)",
+    h:"var(--txt-p)",m:"var(--txt-m)",d:"var(--txt-d)",
+  };
+
+  const load=async(silent=false)=>{
+    if(!silent) setLoading(true);
+    try{
+      if(!wh3||wh3.includes("your-app")){
+        setItems(prev=>{
+          const existingIds=new Set(prev.map(i=>i.id));
+          const newItems=MOCK_PENDING.filter(i=>!existingIds.has(i.id));
+          return [...prev, ...newItems];
+        });
+        setLoading(false);
+        return;
+      }
+      const res=await fetch(wh3,{method:"GET",headers:{"Accept":"application/json"}});
+      if(!res.ok) throw new Error("HTTP "+res.status);
+      const raw=await res.json();
+      const parsed=parseN8NResponse(raw);
+      if(parsed&&parsed.length>0){
+        const mappedItems = parsed.map(item => ({
+          id: item.id || `pending-${Math.random()}`,
+          type: item.type || "news",
+          country: item.country || "عام",
+          countryCode: item.countryCode || "INTL",
+          flag: item.flag || "🌍",
+          category: item.category || "عام",
+          title: item.title || "",
+          body: item.body || "",
+          summary: item.summary || item.body || "",
+          analysis: item.analysis || item.Analyse || "",
+          source: item.source || item.author || "مصدر غير معروف",
+          author: item.author || "",
+          readTime: item.readTime || "3 دقائق",
+          publishedAt: item.publishedAt || new Date().toISOString(),
+          tags: typeof item.tags === "string" ? JSON.parse(item.tags) : (item.tags || []),
+          image: item.image || "",
+          urgent: item.urgent ?? false,
+          validation: item.validation ?? item["Sent Validation"] ?? item["Validation"] ?? null,
+        }));
+        setItems(prev=>{
+          const doneSet=new Set(Object.keys(doneIds));
+          const existingIds=new Set(prev.map(i=>i.id));
+          const kept=prev.filter(i=>!doneSet.has(i.id));
+          const incoming=mappedItems.filter(i=>!existingIds.has(i.id)&&!doneSet.has(i.id));
+          return [...kept,...incoming];
+        });
+      }
+    }catch(e){
+      console.warn("ReviewScreen load error:",e.message);
+      if(!silent) setItems(prev=>prev.length>0?prev:MOCK_PENDING);
+    }
+    if(!silent) setLoading(false);
+  };
+
+  useEffect(()=>{load();},[]);
+
+  const sendDecision=async(item,approved)=>{
+    setSendingId(item.id+(approved?"true":"false"));
+    const payload={
+      id: item.id,
+      type: item.type,
+      validation: approved,
+      validated_at: new Date().toISOString(),
+      content:{
+        title: item.title || null,
+        body: item.body || null,
+        summary: item.summary || null,
+        analysis: item.analysis || null,
+        category: item.category || null,
+        urgent: item.urgent ?? false,
+        source: item.source || null,
+        author: item.author || null,
+        readTime: item.readTime || null,
+        tags: item.tags || [],
+        image: item.image || null,
+        country: item.country || null,
+        countryCode: item.countryCode || null,
+        flag: item.flag || null,
+      }
+    };
+
+    try{
+      const actionUrl=wh4&&!wh4.includes("your-app")?wh4:null;
+      if(actionUrl){
+        await fetch(actionUrl,{
+          method:"POST",
+          headers:{"Content-Type":"application/json"},
+          body:JSON.stringify(payload)
+        });
+      }
+      setDoneIds(prev=>({...prev,[item.id]:approved?"approved":"rejected"}));
+      setItems(prev=>prev.filter(i=>i.id!==item.id));
+    }catch(e){
+      console.error("sendDecision error:",e);
+      alert("تعذر إرسال القرار إلى n8n");
+    }finally{
+      setSendingId(null);
+    }
+  };
+
+  const updateField = (id, field, value) => {
+    setItems(prev => prev.map(item => item.id === id ? { ...item, [field]: value } : item));
+  };
+
+  return(
+    <div style={{flex:1,display:"flex",flexDirection:"column",overflow:"hidden"}}>
+      <div style={{padding:"14px 20px 12px",display:"flex",alignItems:"center",justifyContent:"space-between",flexShrink:0}}>
+        <div style={{display:"flex",alignItems:"center",gap:10}}>
+          <button onClick={onBack} style={{background:V.chip,border:"none",cursor:"pointer",color:V.m,fontSize:18,width:34,height:34,borderRadius:10,display:"flex",alignItems:"center",justifyContent:"center"}}>←</button>
+          <div>
+            <div style={{color:V.h,fontWeight:800,fontSize:16}}>مراجعة المحتوى</div>
+            <div style={{color:"#F59E0B",fontSize:10.5,fontWeight:700}}>Workflow 3 · n8n</div>
+          </div>
+        </div>
+        <div style={{display:"flex",alignItems:"center",gap:8}}>
+          <div style={{background:"rgba(245,158,11,.12)",border:"1px solid rgba(245,158,11,.3)",borderRadius:12,padding:"4px 10px"}}>
+            <span style={{color:"#F59E0B",fontSize:11,fontWeight:700}}>{items.length} بانتظار الموافقة</span>
+          </div>
+          <button onClick={()=>load()} disabled={loading} style={{background:"none",border:"none",cursor:"pointer",color:"#F59E0B",fontSize:22,opacity:loading?0.5:1}}>⟳</button>
+        </div>
+      </div>
+
+      <div style={{overflowY:"auto",flex:1,padding:"0 20px 20px"}}>
+        {loading?(
+          <div style={{textAlign:"center",padding:"40px 0",color:V.m}}>جاري تحميل المحتوى للمراجعة...</div>
+        ):items.length===0?(
+          <div style={{display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",padding:"60px 20px",gap:12}}>
+            <div style={{fontSize:48}}>🎉</div>
+            <div style={{color:V.h,fontSize:15,fontWeight:700}}>لا يوجد محتوى قيد المراجعة</div>
+            <div style={{color:V.d,fontSize:13,textAlign:"center"}}>تمت مراجعة جميع الأخبار والمقالات الواردة من n8n.</div>
+          </div>
+        ):(
+          items.map(item=>{
+            const isEditing = editingId === item.id;
+            const col = gc(item.countryCode);
+            return(
+              <div key={item.id} style={{background:V.bg,border:`1px solid ${V.border}`,borderRadius:18,padding:16,marginBottom:16}}>
+                <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:10}}>
+                  <div style={{display:"flex",gap:6,alignItems:"center"}}>
+                    <span style={{background:col.bg,color:col.accent,fontSize:11,fontWeight:700,padding:"2px 8px",borderRadius:20,border:`1px solid ${col.border}`}}>{item.flag} {item.country}</span>
+                    <span style={{background:V.chip,color:V.m,fontSize:11,padding:"2px 8px",borderRadius:20}}>{item.type === "article" ? "🏛️ مقال تحليلي" : "📰 خبر"}</span>
+                    {item.urgent && <span style={{background:"#DC2626",color:"#fff",fontSize:10,fontWeight:700,padding:"2px 6px",borderRadius:20}}>⚡ عاجل</span>}
+                  </div>
+                  <button onClick={()=>setEditingId(isEditing ? null : item.id)} style={{background:"rgba(37,99,235,.12)",border:"1px solid rgba(37,99,235,.3)",color:"#60A5FA",borderRadius:8,padding:"4px 10px",fontSize:12,fontWeight:700,cursor:"pointer"}}>
+                    {isEditing ? "حفظ التعديلات ✏️" : "تعديل النص ✏️"}
+                  </button>
+                </div>
+
+                {isEditing ? (
+                  <div style={{display:"flex",flexDirection:"column",gap:12,marginBottom:12,maxHeight:"380px",overflowY:"auto",paddingRight:4,paddingLeft:4}}>
+                    <div style={{display:"flex",gap:8,alignItems:"center",flexWrap:"wrap",marginBottom:2}}>
+                      <button onClick={()=>updateField(item.id,"type",item.type==="article"?"news":"article")}
+                        style={{background:item.type==="article"?"rgba(124,58,237,.2)":V.chip,border:`1px solid ${item.type==="article"?"#7C3AED":V.border2}`,color:item.type==="article"?"#A78BFA":V.m,borderRadius:8,padding:"4px 10px",fontSize:11,fontWeight:700,cursor:"pointer"}}>
+                        {item.type === "article" ? "🏛️ مقال تحليلي" : "📰 خبر"}
+                      </button>
+                      <button onClick={()=>updateField(item.id,"urgent",!item.urgent)}
+                        style={{background:item.urgent?"#DC2626":V.chip,border:`1px solid ${item.urgent?"#DC2626":V.border2}`,color:item.urgent?"#fff":V.m,borderRadius:8,padding:"4px 10px",fontSize:11,fontWeight:700,cursor:"pointer"}}>
+                        {item.urgent ? "⚡ عاجل (مُفعّل)" : "⚡ غير عاجل"}
+                      </button>
+                    </div>
+
+                    <div>
+                      <div style={{color:V.m,fontSize:11,fontWeight:700,marginBottom:4}}>العنوان</div>
+                      <input value={item.title||""} onChange={e => updateField(item.id, "title", e.target.value)} placeholder="العنوان" style={{width:"100%",background:V.bgInput,border:`1px solid ${V.border2}`,borderRadius:8,padding:"8px 10px",color:V.h,fontSize:13,fontFamily:"inherit",outline:"none",boxSizing:"border-box",direction:"rtl"}} />
+                    </div>
+
+                    <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:8}}>
+                      <div>
+                        <div style={{color:V.m,fontSize:11,fontWeight:700,marginBottom:4}}>القسم</div>
+                        <input value={item.category||""} onChange={e => updateField(item.id, "category", e.target.value)} placeholder="مثال: اقتصاد" style={{width:"100%",background:V.bgInput,border:`1px solid ${V.border2}`,borderRadius:8,padding:"8px 10px",color:V.h,fontSize:12,fontFamily:"inherit",outline:"none",boxSizing:"border-box",direction:"rtl"}} />
+                      </div>
+                      <div>
+                        <div style={{color:V.m,fontSize:11,fontWeight:700,marginBottom:4}}>وقت القراءة</div>
+                        <input value={item.readTime||""} onChange={e => updateField(item.id, "readTime", e.target.value)} placeholder="مثال: 5 دقائق" style={{width:"100%",background:V.bgInput,border:`1px solid ${V.border2}`,borderRadius:8,padding:"8px 10px",color:V.h,fontSize:12,fontFamily:"inherit",outline:"none",boxSizing:"border-box",direction:"rtl"}} />
+                      </div>
+                    </div>
+
+                    <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:8}}>
+                      <div>
+                        <div style={{color:V.m,fontSize:11,fontWeight:700,marginBottom:4}}>المصدر</div>
+                        <input value={item.source||""} onChange={e => updateField(item.id, "source", e.target.value)} placeholder="مثال: الجزيرة" style={{width:"100%",background:V.bgInput,border:`1px solid ${V.border2}`,borderRadius:8,padding:"8px 10px",color:V.h,fontSize:12,fontFamily:"inherit",outline:"none",boxSizing:"border-box",direction:"rtl"}} />
+                      </div>
+                      <div>
+                        <div style={{color:V.m,fontSize:11,fontWeight:700,marginBottom:4}}>الكاتب / المحلل</div>
+                        <input value={item.author||""} onChange={e => updateField(item.id, "author", e.target.value)} placeholder="اسم الكاتب" style={{width:"100%",background:V.bgInput,border:`1px solid ${V.border2}`,borderRadius:8,padding:"8px 10px",color:V.h,fontSize:12,fontFamily:"inherit",outline:"none",boxSizing:"border-box",direction:"rtl"}} />
+                      </div>
+                    </div>
+
+                    <div>
+                      <div style={{color:V.m,fontSize:11,fontWeight:700,marginBottom:4}}>الوسوم</div>
+                      <input value={Array.isArray(item.tags)?item.tags.join(", "):item.tags||""} onChange={e => updateField(item.id, "tags", e.target.value.split(",").map(t=>t.trim()).filter(Boolean))} placeholder="سياسة, اقتصاد" style={{width:"100%",background:V.bgInput,border:`1px solid ${V.border2}`,borderRadius:8,padding:"8px 10px",color:V.h,fontSize:12,fontFamily:"inherit",outline:"none",boxSizing:"border-box",direction:"rtl"}} />
+                    </div>
+
+                    <div>
+                      <div style={{color:V.m,fontSize:11,fontWeight:700,marginBottom:4}}>الرأي الموجز / الملخص</div>
+                      <textarea value={item.summary||""} onChange={e => updateField(item.id, "summary", e.target.value)} placeholder="الملخص" style={{width:"100%",minHeight:60,background:V.bgInput,border:`1px solid ${V.border2}`,borderRadius:8,padding:"8px 10px",color:V.h,fontSize:12.5,fontFamily:"inherit",outline:"none",boxSizing:"border-box",direction:"rtl",resize:"none"}} />
+                    </div>
+
+                    <div>
+                      <div style={{color:V.m,fontSize:11,fontWeight:700,marginBottom:4}}>المحتوى الكامل / النص الأصلي</div>
+                      <textarea value={item.body||""} onChange={e => updateField(item.id, "body", e.target.value)} placeholder="النص الأصلي" style={{width:"100%",minHeight:80,background:V.bgInput,border:`1px solid ${V.border2}`,borderRadius:8,padding:"8px 10px",color:V.h,fontSize:12.5,fontFamily:"inherit",outline:"none",boxSizing:"border-box",direction:"rtl",resize:"none"}} />
+                    </div>
+
+                    <div>
+                      <div style={{color:col.accent,fontSize:11,fontWeight:700,marginBottom:4}}>التحليل السياسي</div>
+                      <textarea value={item.analysis||""} onChange={e => updateField(item.id, "analysis", e.target.value)} placeholder="التحليل السياسي" style={{width:"100%",minHeight:70,background:V.bgInput,border:`1px solid ${V.border2}`,borderRadius:8,padding:"8px 10px",color:col.accent,fontSize:12.5,fontFamily:"inherit",outline:"none",boxSizing:"border-box",direction:"rtl",resize:"none"}} />
+                    </div>
+                  </div>
+                ) : (
+                  <div style={{display:"flex",flexDirection:"column",gap:12}}>
+                    <div>
+                      <div style={{color:V.m,fontSize:11,fontWeight:700,marginBottom:4}}>العنوان</div>
+                      <div style={{color:V.h,fontSize:14.5,fontWeight:700,lineHeight:1.5}}>{item.title}</div>
+                    </div>
+                    
+                    {item.summary && (
+                      <div>
+                        <div style={{color:V.m,fontSize:11,fontWeight:700,marginBottom:4}}>الرأي الموجز / الملخص</div>
+                        <div style={{maxHeight:100,overflowY:"auto",background:V.chip,padding:"8px 10px",borderRadius:8,color:V.h,fontSize:13,lineHeight:1.6}}>
+                          {item.summary}
+                        </div>
+                      </div>
+                    )}
+
+                    {item.body && (
+                      <div>
+                        <div style={{color:V.m,fontSize:11,fontWeight:700,marginBottom:4}}>المحتوى الكامل / النص الأصلي</div>
+                        <div style={{maxHeight:120,overflowY:"auto",background:V.bgInput,border:`1px solid ${V.border2}`,padding:"8px 10px",borderRadius:8,color:V.m,fontSize:12.5,lineHeight:1.6}}>
+                          {item.body}
+                        </div>
+                      </div>
+                    )}
+                    
+                    <div style={{display:"flex",gap:10,fontSize:11,color:V.d,flexWrap:"wrap"}}>
+                      {item.source && <span>📰 {item.source}</span>}
+                      {item.author && <span>✍️ {item.author}</span>}
+                      {item.readTime && <span>⏱ {item.readTime}</span>}
+                    </div>
+
+                    {Array.isArray(item.tags) && item.tags.length > 0 && (
+                      <div>
+                        <div style={{color:V.m,fontSize:11,fontWeight:700,marginBottom:4}}>الوسوم</div>
+                        <div style={{display:"flex",gap:4,flexWrap:"wrap"}}>
+                          {item.tags.map((t,idx)=><span key={idx} style={{background:col.bg,color:col.accent,fontSize:10,padding:"2px 6px",borderRadius:10,border:`1px solid ${col.border}`}}>#{t}</span>)}
+                        </div>
+                      </div>
+                    )}
+
+                    {item.analysis && (
+                      <div>
+                        <div style={{color:col.accent,fontSize:11,fontWeight:700,marginBottom:4}}>🤖 التحليل السياسي المخزّن</div>
+                        <div style={{maxHeight:120,overflowY:"auto",background:col.bg,border:`1px solid ${col.border}`,borderRadius:8,padding:"8px 10px",color:V.m,fontSize:12.5,lineHeight:1.6}}>
+                          {item.analysis}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                <div style={{display:"flex",gap:10,marginTop:12}}>
+                  <button onClick={() => sendDecision(item, true)} disabled={sendingId !== null} style={{flex:1,padding:"10px",borderRadius:12,border:"none",background:"linear-gradient(135deg,#22C55E,#16A34A)",color:"#fff",fontWeight:700,fontSize:13,cursor:"pointer",fontFamily:"inherit",opacity:sendingId === item.id + "true" ? 0.6 : 1}}>
+                    {sendingId === item.id + "true" ? "جاري الإرسال..." : "موافقة ونشر ✅"}
+                  </button>
+                  <button onClick={() => sendDecision(item, false)} disabled={sendingId !== null} style={{flex:1,padding:"10px",borderRadius:12,border:"none",background:"linear-gradient(135deg,#EF4444,#DC2626)",color:"#fff",fontWeight:700,fontSize:13,cursor:"pointer",fontFamily:"inherit",opacity:sendingId === item.id + "false" ? 0.6 : 1}}>
+                    {sendingId === item.id + "false" ? "جاري الإرسال..." : "رفض ❌"}
+                  </button>
+                </div>
+              </div>
+            );
+          })
+        )}
+      </div>
+    </div>
+  );
+}
+
+// ══════════════════════════════════════════════
+//  MAIN ROOT APP
+// ══════════════════════════════════════════════
+function App(){
+  const [tab, setTab] = useState("home");
+  const [news, setNews] = useState(MOCK_NEWS);
+  const [analyses, setAnalyses] = useState(MOCK_ANALYSES);
+  const [loadingNews, setLoadingNews] = useState(false);
+  const [loadingAnalyses, setLoadingAnalyses] = useState(false);
+
+  const [wh1, setWh1] = useState(() => localStorage.getItem("wh1") || "https://your-n8n-instance.com/webhook/news");
+  const [wh2, setWh2] = useState(() => localStorage.getItem("wh2") || "https://your-n8n-instance.com/webhook/analyses");
+  const [wh3, setWh3] = useState(() => localStorage.getItem("wh3") || "https://your-n8n-instance.com/webhook/review");
+  const [wh4, setWh4] = useState(() => localStorage.getItem("wh4") || "https://your-n8n-instance.com/webhook/review-action");
+
+  const [ri, setRi] = useState(300);
+  const [dark, setDark] = useState(true);
+  const [isAdmin, setIsAdmin] = useState(() => localStorage.getItem("isAdmin") === "1");
+
+  const [savedNews, setSavedNews] = useState(() => new Set());
+  const [savedItems, setSavedItems] = useState([]);
+  const [openedNews, setOpenedNews] = useState(null);
+  const [activeCountryNews, setActiveCountryNews] = useState("الكل");
+
+  const [lastUpdateNews, setLastUpdateNews] = useState(new Date());
+  const [lastUpdateAnalyses, setLastUpdateAnalyses] = useState(new Date());
+
+  const refreshNews = useCallback(async () => {
+    setLoadingNews(true);
+    const data = await fetchNews(wh1);
+    setNews(data);
+    setLastUpdateNews(new Date());
+    setLoadingNews(false);
+  }, [wh1]);
+
+  const refreshAnalyses = useCallback(async () => {
+    setLoadingAnalyses(true);
+    const data = await fetchAnalyses(wh2);
+    setAnalyses(data);
+    setLastUpdateAnalyses(new Date());
+    setLoadingAnalyses(false);
+  }, [wh2]);
+
+  useEffect(() => {
+    refreshNews();
+    refreshAnalyses();
+  }, [refreshNews, refreshAnalyses]);
+
+  useEffect(() => {
+    if (dark) {
+      document.documentElement.classList.remove("light");
+    } else {
+      document.documentElement.classList.add("light");
+    }
+  }, [dark]);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      refreshNews();
+      refreshAnalyses();
+    }, ri * 1000);
+    return () => clearInterval(interval);
+  }, [ri, refreshNews, refreshAnalyses]);
+
+  const toggleSave = (item) => {
+    setSavedNews(prev => {
+      const next = new Set(prev);
+      if (next.has(item.id)) {
+        next.delete(item.id);
+        setSavedItems(s => s.filter(x => x.id !== item.id));
+      } else {
+        next.add(item.id);
+        setSavedItems(s => [item, ...s]);
+      }
+      return next;
+    });
+  };
+
+  const urgentCount = news.filter(n => n.urgent).length;
+
+  return (
+    <div style={{
+      width:"100%", maxWidth:480, height:"100vh", maxHeight:900,
+      background:"var(--bg-shell)", border:"1px solid var(--border)",
+      borderRadius:24, display:"flex", flexDirection:"column",
+      position:"relative", overflow:"hidden", boxShadow:"0 20px 50px var(--shadow)"
+    }}>
+      <StatusBar />
+
+      <div style={{flex:1, display:"flex", flexDirection:"column", overflow:"hidden", position:"relative"}}>
+        {tab === "home" && (
+          <HomeScreen
+            news={news} loading={loadingNews} onRefresh={refreshNews}
+            lastUpdate={lastUpdateNews} savedIds={savedNews} onSave={toggleSave}
+            onOpen={setOpenedNews} activeCountry={activeCountryNews} setActive={setActiveCountryNews}
+          />
+        )}
+        {tab === "analyse" && (
+          <AnalysesScreen
+            analyses={analyses} loading={loadingAnalyses} onRefresh={refreshAnalyses}
+            lastUpdate={lastUpdateAnalyses}
+          />
+        )}
+        {tab === "notifications" && (
+          <NotificationsScreen news={news} onBack={() => setTab("home")} />
+        )}
+        {tab === "saved" && (
+          <SavedScreen
+            saved={savedItems}
+            onUnsave={(id) => toggleSave({id})}
+            onOpen={setOpenedNews}
+            onBack={() => setTab("home")}
+          />
+        )}
+        {tab === "settings" && (
+          <SettingsScreen
+            onBack={() => setTab("home")}
+            wh1={wh1} setWh1={setWh1}
+            wh2={wh2} setWh2={setWh2}
+            wh3={wh3} setWh3={setWh3}
+            wh4={wh4} setWh4={setWh4}
+            ri={ri} setRi={setRi}
+            dark={dark} setDark={setDark}
+            isAdmin={isAdmin} setIsAdmin={setIsAdmin}
+          />
+        )}
+        {tab === "review" && isAdmin && (
+          <ReviewScreen wh3={wh3} wh4={wh4} dark={dark} onBack={() => setTab("home")} />
+        )}
+      </div>
+
+      <NewsDrawer news={openedNews} onClose={() => setOpenedNews(null)} />
+
+      {/* Bottom Navigation */}
+      <div style={{
+        height:64, background:"var(--bg-nav)", borderTop:"1px solid var(--border)",
+        display:"flex", alignItems:"center", justifyContent:"space-around",
+        padding:"0 10px max(10px, env(safe-area-inset-bottom))", flexShrink:0, zIndex:5
+      }}>
+        <button onClick={() => setTab("home")} style={{background:"none", border:"none", cursor:"pointer", display:"flex", flexDirection:"column", alignItems:"center", gap:3, color:tab==="home"?"#2563EB":"var(--txt-d)", fontFamily:"inherit"}}>
+          <span style={{fontSize:20}}>🏠</span>
+          <span style={{fontSize:10, fontWeight:tab==="home"?700:500}}>الأخبار</span>
+        </button>
+
+        <button onClick={() => setTab("analyse")} style={{background:"none", border:"none", cursor:"pointer", display:"flex", flexDirection:"column", alignItems:"center", gap:3, color:tab==="analyse"?"#7C3AED":"var(--txt-d)", fontFamily:"inherit"}}>
+          <span style={{fontSize:20}}>🏛️</span>
+          <span style={{fontSize:10, fontWeight:tab==="analyse"?700:500}}>التحاليل</span>
+        </button>
+
+        {isAdmin && (
+          <button onClick={() => setTab("review")} style={{background:"none", border:"none", cursor:"pointer", display:"flex", flexDirection:"column", alignItems:"center", gap:3, color:tab==="review"?"#F59E0B":"var(--txt-d)", fontFamily:"inherit"}}>
+            <span style={{fontSize:20}}>📋</span>
+            <span style={{fontSize:10, fontWeight:tab==="review"?700:500}}>المراجعة</span>
+          </button>
+        )}
+
+        <button onClick={() => setTab("notifications")} style={{background:"none", border:"none", cursor:"pointer", display:"flex", flexDirection:"column", alignItems:"center", gap:3, color:tab==="notifications"?"#DC2626":"var(--txt-d)", fontFamily:"inherit", position:"relative"}}>
+          <span style={{fontSize:20}}>🔔</span>
+          <span style={{fontSize:10, fontWeight:tab==="notifications"?700:500}}>التنبيهات</span>
+          {urgentCount > 0 && (
+            <div style={{position:"absolute", top:0, right:12, width:8, height:8, background:"#DC2626", borderRadius:"50%"}} />
+          )}
+        </button>
+
+        <button onClick={() => setTab("saved")} style={{background:"none", border:"none", cursor:"pointer", display:"flex", flexDirection:"column", alignItems:"center", gap:3, color:tab==="saved"?"#F59E0B":"var(--txt-d)", fontFamily:"inherit"}}>
+          <span style={{fontSize:20}}>🔖</span>
+          <span style={{fontSize:10, fontWeight:tab==="saved"?700:500}}>المحفوظات</span>
+        </button>
+
+        <button onClick={() => setTab("settings")} style={{background:"none", border:"none", cursor:"pointer", display:"flex", flexDirection:"column", alignItems:"center", gap:3, color:tab==="settings"?"#64748B":"var(--txt-d)", fontFamily:"inherit"}}>
+          <span style={{fontSize:20}}>⚙️</span>
+          <span style={{fontSize:10, fontWeight:tab==="settings"?700:500}}>الإعدادات</span>
+        </button>
+      </div>
+    </div>
+  );
+}
+
+const rootElement = document.getElementById("root");
+ReactDOM.render(<App />, rootElement);
+
+// PWA Install prompt listener
+let deferredPrompt;
+window.addEventListener('beforeinstallprompt', (e) => {
+  e.preventDefault();
+  deferredPrompt = e;
+  const banner = document.getElementById('install-banner');
+  if (banner) banner.classList.remove('hidden');
+});
+
+document.getElementById('install-btn')?.addEventListener('click', async () => {
+  if (deferredPrompt) {
+    deferredPrompt.prompt();
+    const { outcome } = await deferredPrompt.userChoice;
+    deferredPrompt = null;
+    document.getElementById('install-banner')?.classList.add('hidden');
+  }
+});
+
+document.getElementById('install-close')?.addEventListener('click', () => {
+  document.getElementById('install-banner')?.classList.add('hidden');
+});
+</script>
+</body>
+</html>
