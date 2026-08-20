@@ -1114,11 +1114,6 @@ function ReviewScreen({wh3,wh4,dark,onBack}){
                     </div>
 
                     <div>
-                      <div style={{color:V.m,fontSize:11,fontWeight:700,marginBottom:4}}>الرأي الموجز / الملخص</div>
-                      <textarea value={item.summary||""} onChange={e => updateField(item.id, "summary", e.target.value)} placeholder="الملخص" style={{width:"100%",minHeight:60,background:V.bgInput,border:`1px solid ${V.border2}`,borderRadius:8,padding:"8px 10px",color:V.h,fontSize:12.5,fontFamily:"inherit",outline:"none",boxSizing:"border-box",direction:"rtl",resize:"none"}} />
-                    </div>
-
-                    <div>
                       <div style={{color:V.m,fontSize:11,fontWeight:700,marginBottom:4}}>المحتوى الكامل / النص الأصلي</div>
                       <textarea value={item.body||""} onChange={e => updateField(item.id, "body", e.target.value)} placeholder="النص الأصلي" style={{width:"100%",minHeight:80,background:V.bgInput,border:`1px solid ${V.border2}`,borderRadius:8,padding:"8px 10px",color:V.h,fontSize:12.5,fontFamily:"inherit",outline:"none",boxSizing:"border-box",direction:"rtl",resize:"none"}} />
                     </div>
