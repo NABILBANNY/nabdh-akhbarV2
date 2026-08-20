@@ -1129,15 +1129,6 @@ function ReviewScreen({wh3,wh4,dark,onBack}){
                       <div style={{color:V.m,fontSize:11,fontWeight:700,marginBottom:4}}>العنوان</div>
                       <div style={{color:V.h,fontSize:14.5,fontWeight:700,lineHeight:1.5}}>{item.title}</div>
                     </div>
-                    
-                    {item.summary && (
-                      <div>
-                        <div style={{color:V.m,fontSize:11,fontWeight:700,marginBottom:4}}>الرأي الموجز / الملخص</div>
-                        <div style={{maxHeight:100,overflowY:"auto",background:V.chip,padding:"8px 10px",borderRadius:8,color:V.h,fontSize:13,lineHeight:1.6}}>
-                          {item.summary}
-                        </div>
-                      </div>
-                    )}
 
                     {item.body && (
                       <div>
